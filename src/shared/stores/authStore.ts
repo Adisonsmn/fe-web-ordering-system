@@ -4,8 +4,14 @@ import { immer } from 'zustand/middleware/immer';
 
 export interface UserProfile {
   id: string;
+  email: string;
   name: string;
+  phone: string | null;
   role: 'ADMIN' | 'CLIENT';
+  statusMember: 'REGULAR' | 'PREMIUM' | null;
+  totalPoint: number | null;
+  avatarUrl: string | null;
+  createdAt: string;
   isGuest: boolean;
 }
 
