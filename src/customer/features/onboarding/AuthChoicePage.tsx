@@ -5,10 +5,12 @@ import arrowSkip from '@/assets/arrow_skip.svg';
 import authDecor from '@/assets/auth_decor.png';
 import heroCoffee from '@/assets/hero_coffee.svg';
 import heroStar from '@/assets/hero_star.svg';
+import { useGuestLogin } from '../auth/hooks/useAuth';
 
 const AuthChoicePage: FC = () => {
   const navigate = useNavigate();
   const restoName = useRestoStore((state) => state.restoName);
+  const { mutate: guestLogin, isPending: isGuestLoggingIn } = useGuestLogin();
 
   return (
     <div className="relative w-full min-h-screen bg-off-white select-none overflow-hidden flex flex-col font-sans">
@@ -124,10 +126,11 @@ const AuthChoicePage: FC = () => {
           {/* Button 3: Lanjut sebagai Tamu */}
           <button
             type="button"
-            onClick={() => navigate('/customer/katalog')}
-            className="w-full text-teal-muted font-sans font-bold text-[16px] py-[12px] active:scale-[0.98] transition-all duration-200 text-center cursor-pointer hover:opacity-80"
+            onClick={() => guestLogin({ tableId: '00000000-0000-0000-0000-000000000000' })}
+            disabled={isGuestLoggingIn}
+            className="w-full text-teal-muted font-sans font-bold text-[16px] py-[12px] active:scale-[0.98] transition-all duration-200 text-center cursor-pointer hover:opacity-80 disabled:opacity-50"
           >
-            Lanjut sebagai Tamu
+            {isGuestLoggingIn ? 'Memproses...' : 'Lanjut sebagai Tamu'}
           </button>
         </div>
       </div>

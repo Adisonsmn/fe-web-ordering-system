@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { addKeranjangItem, getKeranjang } from '../api/keranjang.api';
+import {
+  addKeranjangItem,
+  clearKeranjang,
+  getKeranjang,
+  removeKeranjangItem,
+  updateKeranjangItem,
+} from '../api/keranjang.api';
 
 export const keranjangKeys = {
   all: ['keranjang'] as const,
@@ -10,7 +16,7 @@ import { useAuthStore } from '@shared/stores/authStore';
 
 export const useKeranjang = () => {
   const token = useAuthStore((state) => state.token);
-  
+
   return useQuery({
     queryKey: keranjangKeys.detail(),
     queryFn: getKeranjang,
@@ -26,12 +32,65 @@ export const useTambahItem = () => {
   return useMutation({
     mutationFn: addKeranjangItem,
     onSuccess: () => {
-      // Invalidate cache keranjang setelah berhasil tambah item
+      queryClient.invalidateQueries({ queryKey: keranjangKeys.all });
+    },
+    onError: (error: any) => {
+      console.error('Gagal tambah item ke keranjang:', error);
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        alert(
+          'Sesi tidak valid. Silakan mulai ulang dari awal (Welcome) atau Login untuk memindai meja.',
+        );
+      } else {
+        alert('Gagal menambahkan item ke keranjang. Silakan coba lagi.');
+      }
+    },
+  });
+};
+
+export const useUpdateItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      detailId,
+      payload,
+    }: {
+      detailId: string;
+      payload: import('@shared/types').UpdateKeranjangItemRequest;
+    }) => updateKeranjangItem(detailId, payload),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: keranjangKeys.all });
     },
     onError: (error) => {
-      console.error('Gagal tambah item ke keranjang:', error);
-      // Di sini idealnya panggil toast notification kalau ada toast global
+      console.error('Gagal update item keranjang:', error);
+    },
+  });
+};
+
+export const useRemoveItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeKeranjangItem,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keranjangKeys.all });
+    },
+    onError: (error) => {
+      console.error('Gagal hapus item keranjang:', error);
+    },
+  });
+};
+
+export const useClearKeranjang = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: clearKeranjang,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: keranjangKeys.all });
+    },
+    onError: (error) => {
+      console.error('Gagal mengosongkan keranjang:', error);
     },
   });
 };

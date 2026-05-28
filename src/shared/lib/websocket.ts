@@ -2,7 +2,14 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 export const createStompClient = (): Client => {
-  const wsUrl = import.meta.env.VITE_WS_URL;
+  let wsUrl = import.meta.env.VITE_WS_URL;
+
+  // SockJS requires http/https scheme, not ws/wss
+  if (wsUrl?.startsWith('wss://')) {
+    wsUrl = wsUrl.replace('wss://', 'https://');
+  } else if (wsUrl?.startsWith('ws://')) {
+    wsUrl = wsUrl.replace('ws://', 'http://');
+  }
 
   const client = new Client({
     webSocketFactory: () => new SockJS(wsUrl),

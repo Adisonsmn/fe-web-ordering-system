@@ -2,7 +2,7 @@ import { useAuthStore } from '@shared/stores/authStore';
 import type { LoginRequest, LoginResponse, RegisterRequest } from '@shared/types';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, registerUser } from '../api/auth.api';
+import { loginAsGuest, loginUser, registerUser } from '../api/auth.api';
 
 // Error response interface based on backend standard
 export interface ApiError {
@@ -83,6 +83,21 @@ export const useRegister = () => {
       }
 
       // Navigate to catalog on success
+      navigate('/customer/katalog');
+    },
+  });
+};
+
+export const useGuestLogin = () => {
+  const navigate = useNavigate();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  return useMutation<LoginResponse, ApiError, { tableId: string }>({
+    mutationFn: loginAsGuest,
+    onSuccess: (data) => {
+      const { accessToken } = data;
+      // Guest does not have user profile or refresh token
+      setAuth(accessToken, '', null, true);
       navigate('/customer/katalog');
     },
   });

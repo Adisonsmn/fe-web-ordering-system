@@ -7,17 +7,26 @@ interface MenuCardProps {
   menu: MenuResponse;
   onAddToCart: (menuId: string) => void;
   isAddingToCart: boolean;
+  onCardClick?: (menuId: string) => void;
 }
 
-const MenuCard: FC<MenuCardProps> = ({ menu, onAddToCart, isAddingToCart }) => {
+const MenuCard: FC<MenuCardProps> = ({ menu, onAddToCart, isAddingToCart, onCardClick }) => {
   const isAvailable = menu.isAvailable;
 
   return (
     <div
+      onClick={() => onCardClick && onCardClick(menu.menuId)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onCardClick && onCardClick(menu.menuId);
+        }
+      }}
       className={`bg-white rounded-[12px] p-[13px] flex gap-3 relative overflow-hidden ${
         isAvailable
-          ? 'shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)]'
-          : 'border border-dashed border-[#e4beb4]'
+          ? 'shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] cursor-pointer'
+          : 'border border-dashed border-[#e4beb4] cursor-default'
       }`}
     >
       {!isAvailable && <div className="absolute inset-0 bg-white/50 z-10 pointer-events-none" />}
@@ -80,8 +89,11 @@ const MenuCard: FC<MenuCardProps> = ({ menu, onAddToCart, isAddingToCart }) => {
           <button
             type="button"
             disabled={!isAvailable || isAddingToCart}
-            onClick={() => onAddToCart(menu.menuId)}
-            className={`flex items-center justify-center h-[28px] px-3 rounded-[8px] transition-all active:scale-95 ${
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart(menu.menuId);
+            }}
+            className={`flex items-center justify-center h-[28px] px-3 rounded-[8px] transition-all active:scale-95 z-20 relative ${
               isAvailable
                 ? 'bg-[#ff5722] text-white hover:bg-[#b02f00] shadow-[0_4px_10px_rgba(255,87,34,0.3)]'
                 : 'bg-[#e2e2e2] text-[#5b4039] opacity-80 cursor-not-allowed'

@@ -3,6 +3,7 @@ import { ShoppingCart } from 'lucide-react';
 import { type FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useKeranjang, useTambahItem } from '../keranjang/hooks/useKeranjang';
+import MenuDetailSheet from '../menu-detail/MenuDetailSheet';
 import CartMiniBar from './components/CartMiniBar';
 import HeroBanner from './components/HeroBanner';
 import KategoriTab from './components/KategoriTab';
@@ -16,6 +17,7 @@ const KatalogPage: FC = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchValue, setSearchValue] = useState<string>('');
+  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
   const debouncedSearch = useDebounce(searchValue, 300);
 
@@ -102,6 +104,7 @@ const KatalogPage: FC = () => {
                   menu={menu}
                   onAddToCart={handleAddToCart}
                   isAddingToCart={isAddingToCart}
+                  onCardClick={setSelectedMenuId}
                 />
               ))}
             </div>
@@ -116,6 +119,12 @@ const KatalogPage: FC = () => {
       </div>
 
       <CartMiniBar keranjang={keranjang} />
+
+      <MenuDetailSheet
+        menuId={selectedMenuId}
+        open={!!selectedMenuId}
+        onClose={() => setSelectedMenuId(null)}
+      />
     </div>
   );
 };

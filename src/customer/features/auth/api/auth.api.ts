@@ -10,3 +10,8 @@ export const registerUser = async (payload: RegisterRequest): Promise<LoginRespo
   const data = await apiClient.post<unknown, LoginResponse>('/auth/register', payload);
   return data;
 };
+
+export const loginAsGuest = async (payload: { tableId: string }): Promise<LoginResponse> => {
+  const data = await apiClient.post<unknown, LoginResponse>('/auth/guest', payload);
+  return data;
+};

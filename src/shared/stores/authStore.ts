@@ -20,7 +20,12 @@ export interface AuthState {
   refreshToken: string | null;
   user: UserProfile | null;
   isGuest: boolean;
-  setAuth: (token: string, refreshToken: string, user: UserProfile, isGuest: boolean) => void;
+  setAuth: (
+    token: string,
+    refreshToken: string,
+    user: UserProfile | null,
+    isGuest: boolean,
+  ) => void;
   clearAuth: () => void;
 }
 

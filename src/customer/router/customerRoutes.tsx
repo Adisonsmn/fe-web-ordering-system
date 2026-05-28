@@ -3,9 +3,16 @@ import CustomerApp from '../CustomerApp';
 import LoginPage from '../features/auth/LoginPage';
 import RegisterPage from '../features/auth/RegisterPage';
 import KatalogPage from '../features/katalog/KatalogPage';
+import KeranjangPage from '../features/keranjang/KeranjangPage';
 import AuthChoicePage from '../features/onboarding/AuthChoicePage';
 import WelcomePage from '../features/onboarding/WelcomePage';
+import KonfirmasiPage from '../features/pesanan/KonfirmasiPage';
+import SuksesPage from '../features/pesanan/SuksesPage';
+import TrackingPage from '../features/pesanan/TrackingPage';
 import SplashScreen from '../features/splash/SplashScreen';
+import StrukPage from '../features/struk/StrukPage';
+import UlasanPage from '../features/ulasan/UlasanPage';
+import UlasanSuksesPage from '../features/ulasan/UlasanSuksesPage';
 
 export const customerRoutes: RouteObject[] = [
   {
@@ -35,6 +42,34 @@ export const customerRoutes: RouteObject[] = [
       {
         path: 'register',
         element: <RegisterPage />,
+      },
+      {
+        path: 'keranjang',
+        element: <KeranjangPage />,
+      },
+      {
+        path: 'konfirmasi',
+        element: <KonfirmasiPage />,
+      },
+      {
+        path: 'pesanan-sukses/:pesananId',
+        element: <SuksesPage />,
+      },
+      {
+        path: 'pesanan/tracking/:pesananId',
+        element: <TrackingPage />,
+      },
+      {
+        path: 'struk/:pesananId',
+        element: <StrukPage />,
+      },
+      {
+        path: 'ulasan/:pesananId',
+        element: <UlasanPage />,
+      },
+      {
+        path: 'ulasan-sukses',
+        element: <UlasanSuksesPage />,
       },
     ],
   },
