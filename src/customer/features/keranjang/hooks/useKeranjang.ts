@@ -6,12 +6,17 @@ export const keranjangKeys = {
   detail: () => [...keranjangKeys.all, 'detail'] as const,
 };
 
+import { useAuthStore } from '@shared/stores/authStore';
+
 export const useKeranjang = () => {
+  const token = useAuthStore((state) => state.token);
+  
   return useQuery({
     queryKey: keranjangKeys.detail(),
     queryFn: getKeranjang,
     // Jangan cache terlalu lama karena bisa di-update
     staleTime: 1000 * 30, // 30 detik
+    enabled: !!token, // HANYA fetch keranjang ke API jika user sudah punya token
   });
 };
 
