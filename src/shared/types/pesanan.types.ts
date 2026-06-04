@@ -46,6 +46,11 @@ export interface CreatePesananRequest {
   gunakanPoin: boolean;
 }
 
+export interface UpdateStatusPesananRequest {
+  status: StatusPesanan;
+  estimasiMenit?: number;
+}
+
 export interface PoinBalanceResponse {
   totalPoint: number;
   rupiahPerPoin: number;

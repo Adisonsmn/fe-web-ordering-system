@@ -45,16 +45,26 @@ export interface MenuDetailResponse {
   updatedBy: string | null;
 }
 
-export interface PromoResponse {
-  promoId: string;
-  namaPromo: string;
-  tipeDiskon: 'NOMINAL' | 'PERSEN';
-  nilaiDiskon: number;
-  tanggalMulai: string;
-  tanggalSelesai: string;
-  targetCategory: string | null;
-  isActive: boolean;
+
+
+export interface CreateMenuRequest {
+  menuName: string;
+  price: number;
+  description: string;
+  category: string;
   imageUrl: string | null;
-  tag: string | null;
-  description: string | null;
+  heroImageUrl: string | null;
+  titleLine1: string | null;
+  titleLine2: string | null;
+  longDescription: string | null;
+  showDoneness: boolean;
+  donenessOptions: string[] | null;
+  spiceOptions: string[] | null;
+  promoId: string | null;
+}
+
+export interface UpdateMenuRequest extends CreateMenuRequest {}
+
+export interface UpdateMenuAvailabilityRequest {
+  isAvailable: boolean;
 }

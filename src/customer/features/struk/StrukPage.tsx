@@ -8,7 +8,7 @@ const StrukPage: FC = () => {
   const { pesananId } = useParams<{ pesananId: string }>();
   const navigate = useNavigate();
 
-  const { data: strukData, isLoading, isError } = useStruk(pesananId || '');
+  const { data: strukData, isLoading, isError, error } = useStruk(pesananId || '');
 
   if (isLoading) {
     return (
@@ -22,7 +22,9 @@ const StrukPage: FC = () => {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] text-center px-4">
         <p className="text-slate-dark text-lg font-medium mb-2">Gagal memuat struk pesanan.</p>
-        <p className="text-sm text-red-500 mb-4">{(error as any)?.response?.data?.message || (error as Error)?.message || 'Unknown error'}</p>
+        <p className="text-sm text-red-500 mb-4">
+          {(error as any)?.response?.data?.message || (error as Error)?.message || 'Unknown error'}
+        </p>
         <button
           className="bg-transparent border-2 border-slate-dark text-slate-dark px-6 py-2 rounded-xl font-semibold mt-4"
           onClick={() => navigate('/customer/katalog')}

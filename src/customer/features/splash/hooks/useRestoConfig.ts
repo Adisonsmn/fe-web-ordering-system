@@ -16,6 +16,6 @@ export const useRestoConfig = () => {
       setRestoConfig(data.isOpen, data.namaRestoran, data.alamat);
       return data;
     },
-    staleTime: 1000 * 60 * 30, // 30 menit - config resto jarang berubah
+    staleTime: 1000 * 60 * 1, // 1 menit - agar perubahan status dari dashboard cepat terdeteksi
   });
 };

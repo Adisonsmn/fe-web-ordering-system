@@ -1,5 +1,4 @@
 import { apiClient } from '@shared/lib/axios';
-import type { ApiResponse } from '@shared/types/api.types';
 import type { CreateRatingRequest, RatingResponse } from '@shared/types/rating.types';
 
 export const submitRating = async (payload: CreateRatingRequest): Promise<RatingResponse> => {

@@ -7,7 +7,7 @@ const SplashScreen: FC = () => {
   const navigate = useNavigate();
 
   // Ambil data konfigurasi operasional restoran
-  const { isLoading } = useRestoConfig();
+  const { data, isLoading } = useRestoConfig();
 
   const [minimumDelayPassed, setMinimumDelayPassed] = useState(false);
 
@@ -29,9 +29,13 @@ const SplashScreen: FC = () => {
   useEffect(() => {
     // Alihkan rute jika durasi minimal sudah terlewati dan pemanggilan REST API selesai
     if (minimumDelayPassed && !isLoading) {
-      navigate('/customer/welcome', { replace: true });
+      if (data && !data.isOpen) {
+        // Do not redirect, stay on splash screen to show closed message
+      } else {
+        navigate('/customer/welcome', { replace: true });
+      }
     }
-  }, [minimumDelayPassed, isLoading, navigate]);
+  }, [minimumDelayPassed, isLoading, navigate, data]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-dark relative overflow-hidden px-[20px]">
@@ -74,21 +78,32 @@ const SplashScreen: FC = () => {
 
       {/* Bottom Content Container */}
       <div className="absolute bottom-[64px] left-0 right-0 flex flex-col items-center px-[20px] gap-6 z-10">
-        {/* Loading Indicator */}
-        <div className="flex items-center justify-center gap-2.5">
-          <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse" />
-          <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse [animation-delay:0.2s]" />
-          <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse [animation-delay:0.4s]" />
-        </div>
+        {minimumDelayPassed && data && !data.isOpen ? (
+          <div className="bg-deep-orange/10 px-6 py-4 rounded-xl border border-deep-orange/20 animate-fade-in-up text-center backdrop-blur-sm">
+            <h3 className="text-deep-orange font-bold text-[18px] mb-1">Restoran Sedang Tutup</h3>
+            <p className="text-off-white/80 text-[14px]">
+              Mohon maaf, kami tidak menerima pesanan saat ini.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Loading Indicator */}
+            <div className="flex items-center justify-center gap-2.5">
+              <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse" />
+              <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse [animation-delay:0.2s]" />
+              <div className="bg-[#76abae] opacity-35 rounded-full size-[8px] animate-pulse [animation-delay:0.4s]" />
+            </div>
 
-        {/* Tagline */}
-        <div className="max-w-[240px] opacity-90">
-          <p className="text-[16px] font-sans italic text-teal-muted text-center leading-[24px]">
-            Nikmati setiap momen tanpa
-            <br />
-            antre
-          </p>
-        </div>
+            {/* Tagline */}
+            <div className="max-w-[240px] opacity-90">
+              <p className="text-[16px] font-sans italic text-teal-muted text-center leading-[24px]">
+                Nikmati setiap momen tanpa
+                <br />
+                antre
+              </p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

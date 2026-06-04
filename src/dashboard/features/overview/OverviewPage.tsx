@@ -1,90 +1,155 @@
-import type { FC } from 'react';
+import { formatRupiah } from '@shared/utils/currency';
+// Icons
+import { Banknote, ChevronLeft, ChevronRight, ReceiptText, Star, Users } from 'lucide-react';
+import { type FC, useRef, useState } from 'react';
+import { ActivityFeed } from './components/ActivityFeed';
+
+// Components
+import { KpiCard } from './components/KpiCard';
+import { LiveOrderScroll } from './components/LiveOrderScroll';
+import { MejaGrid } from './components/MejaGrid';
+import { RevenueChart } from './components/RevenueChart';
+import { TopMenuList } from './components/TopMenuList';
+import {
+  useDashboardDelta,
+  useDashboardStats,
+  useMejaList,
+  useMenuTerlaris,
+  usePendapatanTrend,
+} from './hooks/useDashboardStats';
 
 const OverviewPage: FC = () => {
+  const { data: statsData, isLoading: isLoadingStats, isError: isErrorStats } = useDashboardStats();
+  const { data: deltaData } = useDashboardDelta();
+  const [trendPeriod, setTrendPeriod] = useState<'bulanan' | 'tahunan'>('bulanan');
+  const { data: trendData, isLoading: isLoadingTrend } = usePendapatanTrend({
+    period: trendPeriod,
+  });
+  const { data: topMenuData, isLoading: isLoadingTopMenu } = useMenuTerlaris({ limit: 5 });
+  const { data: mejaData, isLoading: isLoadingMeja } = useMejaList();
+
+  const liveOrderScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    liveOrderScrollRef.current?.scrollBy({ left: -320, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    liveOrderScrollRef.current?.scrollBy({ left: 320, behavior: 'smooth' });
+  };
+
   return (
-    <div className="flex flex-col gap-8">
-      {/* Page Title */}
-      <div>
-        <h1 className="text-[26px] font-serif font-bold text-slate-dark">Overview Dasbor</h1>
-        <p className="text-[14px] text-slate-dark/60 mt-1">
-          Pantau status pemesanan, meja aktif, dan statistik harian restoran Aroma Senja secara
-          real-time.
-        </p>
-      </div>
-
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          {
-            label: 'Pendapatan Hari Ini',
-            value: 'Rp 1.840.000',
-            change: '+12% dibanding kemarin',
-            color: 'border-l-deep-orange',
-          },
-          {
-            label: 'Pesanan Aktif',
-            value: '14 Pesanan',
-            change: '4 sedang diproses koki',
-            color: 'border-l-teal-muted',
-          },
-          {
-            label: 'Okupansi Meja',
-            value: '75%',
-            change: '15 dari 20 meja terisi',
-            color: 'border-l-slate-dark',
-          },
-        ].map((card) => (
-          <div
-            key={card.label}
-            className={`bg-white rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-6 border-l-4 ${card.color} flex flex-col gap-2 border border-slate-dark/5`}
-          >
-            <span className="text-[13px] font-semibold text-slate-dark/60 uppercase tracking-wider">
-              {card.label}
-            </span>
-            <span className="text-[28px] font-bold text-slate-dark font-serif tracking-tight">
-              {card.value}
-            </span>
-            <span className="text-[12px] text-teal-muted font-semibold">{card.change}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Table Status Section */}
-      <div className="bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.04)] p-6 border border-slate-dark/5 flex flex-col gap-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-[18px] font-serif font-semibold text-slate-dark">
-            Denah & Status Meja
-          </h2>
-          <span className="text-[12px] bg-teal-muted/10 text-teal-muted px-3 py-1 rounded-full font-semibold">
-            Status Terkini
-          </span>
+    <div className="flex flex-col gap-8 max-w-[1400px] mx-auto">
+      {/* KPI Row */}
+      {isErrorStats ? (
+        <div className="bg-red-50 text-red-500 p-4 rounded-xl border border-red-100">
+          Gagal memuat ringkasan dashboard. Pastikan backend server berjalan.
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
-          {Array.from({ length: 10 }).map((_, idx) => {
-            const isOccupied = idx % 3 === 0;
-            return (
-              <div
-                // biome-ignore lint/suspicious/noArrayIndexKey: Meja static list layout
-                key={`meja-${idx + 1}`}
-                className={`p-4 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all ${
-                  isOccupied
-                    ? 'bg-deep-orange/5 border-deep-orange/20 text-deep-orange'
-                    : 'bg-white border-slate-dark/10 hover:border-teal-muted/30 text-slate-dark/70'
-                }`}
-              >
-                <span className="text-[14px] font-bold font-serif">Meja {idx + 1}</span>
-                <span
-                  className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                    isOccupied
-                      ? 'bg-deep-orange/10 text-deep-orange'
-                      : 'bg-slate-dark/5 text-slate-dark/60'
-                  }`}
-                >
-                  {isOccupied ? 'Terisi' : 'Kosong'}
-                </span>
-              </div>
-            );
-          })}
+      ) : (
+        <div className="grid grid-cols-4 gap-6">
+          <KpiCard
+            label="Pendapatan Hari Ini"
+            value={isLoadingStats ? '...' : formatRupiah(statsData?.pendapatanHariIni || 0)}
+            subValue={
+              deltaData?.pendapatan.deltaArah !== 'no_data'
+                ? `${deltaData?.pendapatan.deltaPersen}% vs Kemarin`
+                : undefined
+            }
+            icon={<Banknote size={24} className="text-teal-muted" />}
+            isPositive={deltaData?.pendapatan.deltaArah === 'naik'}
+          />
+          <KpiCard
+            label="Total Pesanan"
+            value={isLoadingStats ? '...' : `${statsData?.totalPesananHariIni || 0} Pesanan`}
+            subValue={
+              deltaData?.totalPesanan.deltaArah !== 'no_data'
+                ? `${deltaData?.totalPesanan.deltaPersen}% vs Kemarin`
+                : undefined
+            }
+            icon={<ReceiptText size={24} className="text-teal-muted" />}
+            isPositive={deltaData?.totalPesanan.deltaArah === 'naik'}
+          />
+          <KpiCard
+            label="Okupansi Meja"
+            value={
+              isLoadingStats
+                ? '...'
+                : `${statsData?.totalMejaAktif || 0} / ${mejaData?.length || 0} Meja`
+            }
+            subValue={
+              deltaData?.mejaAktif.deltaArah !== 'no_data'
+                ? `${deltaData?.mejaAktif.deltaPersen}% vs Kemarin`
+                : undefined
+            }
+            icon={<Users size={24} className="text-deep-orange" />}
+            isPositive={deltaData?.mejaAktif.deltaArah === 'naik'}
+          />
+          <KpiCard
+            label="Rating Kepuasan"
+            value={
+              isLoadingStats ? '...' : `${(statsData?.avgRatingHariIni || 0).toFixed(1)} / 5.0`
+            }
+            subValue={
+              deltaData?.ratingRata.deltaArah !== 'no_data'
+                ? `${deltaData?.ratingRata.deltaPersen}% vs Kemarin`
+                : undefined
+            }
+            icon={<Star size={24} className="text-[#FFC107]" />}
+            isPositive={deltaData?.ratingRata.deltaArah === 'naik'}
+          />
+        </div>
+      )}
+
+      {/* Chart & Top Items Row */}
+      <div className="grid grid-cols-5 gap-6">
+        <div className="col-span-3">
+          <RevenueChart
+            data={trendData}
+            isLoading={isLoadingTrend}
+            period={trendPeriod}
+            onPeriodChange={setTrendPeriod}
+          />
+        </div>
+        <div className="col-span-2">
+          <TopMenuList data={topMenuData} isLoading={isLoadingTopMenu} />
+        </div>
+      </div>
+
+      {/* Live Orders Row */}
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-[22px] font-serif font-bold text-slate-dark">Pesanan Langsung</h2>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={scrollLeft}
+              className="w-8 h-8 rounded-full border border-slate-dark/10 flex items-center justify-center text-slate-dark/60 hover:bg-slate-dark/5 transition-colors"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={scrollRight}
+              className="w-8 h-8 rounded-full border border-slate-dark/10 flex items-center justify-center text-slate-dark/60 hover:bg-slate-dark/5 transition-colors"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+        <LiveOrderScroll
+          ref={liveOrderScrollRef}
+          orders={statsData?.liveOrders}
+          isLoading={isLoadingStats}
+        />
+      </div>
+
+      {/* Table Status & Activity Feed Row */}
+      <div className="grid grid-cols-5 gap-6 mb-8">
+        <div className="col-span-3">
+          <MejaGrid mejaList={mejaData} isLoading={isLoadingMeja} />
+        </div>
+        <div className="col-span-2">
+          <ActivityFeed />
         </div>
       </div>
     </div>
