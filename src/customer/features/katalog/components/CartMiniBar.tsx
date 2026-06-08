@@ -19,7 +19,7 @@ const CartMiniBar: FC<CartMiniBarProps> = ({ keranjang }) => {
   const totalItems = keranjang.items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] p-[20px] z-50">
+    <div className="fixed bottom-[80px] left-1/2 -translate-x-1/2 w-full max-w-[390px] p-[20px] z-50">
       <button
         type="button"
         onClick={() => navigate('/customer/keranjang')}

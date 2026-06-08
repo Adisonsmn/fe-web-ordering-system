@@ -31,7 +31,7 @@ const KeranjangItem: FC<KeranjangItemProps> = ({ item }) => {
 
   return (
     <div
-      className={`flex gap-4 py-4 border-b border-slate-200 relative transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
+      className={`flex gap-4 py-[24px] border-b border-slate-200/60 relative transition-opacity ${isPending ? 'opacity-50 pointer-events-none' : ''}`}
     >
       {/* Gambar */}
       <div className="w-[96px] h-[96px] rounded-lg bg-slate-200 overflow-hidden shrink-0">
@@ -44,7 +44,7 @@ const KeranjangItem: FC<KeranjangItemProps> = ({ item }) => {
 
       {/* Detail info */}
       <div className="flex flex-col flex-1 min-w-0 pr-8">
-        <h3 className="font-serif font-semibold text-[18px] text-slate-dark truncate">
+        <h3 className="font-serif font-semibold text-[18px] text-slate-dark leading-[24px] truncate">
           {item.menuName}
         </h3>
 
@@ -61,7 +61,7 @@ const KeranjangItem: FC<KeranjangItemProps> = ({ item }) => {
             onDecrease={handleDecrease}
             className="scale-75 origin-left -ml-2"
           />
-          <span className="font-sans font-semibold text-[16px] text-deep-orange">
+          <span className="font-sans font-normal text-[16px] text-deep-orange">
             {formatRupiah(item.subtotal)}
           </span>
         </div>
@@ -71,7 +71,7 @@ const KeranjangItem: FC<KeranjangItemProps> = ({ item }) => {
       <button
         type="button"
         onClick={handleRemove}
-        className="absolute top-4 right-0 text-slate-dark/40 hover:text-red-500 transition-colors p-1"
+        className="absolute top-[24px] right-0 text-slate-dark/40 hover:text-red-500 transition-colors p-1"
         aria-label="Hapus item"
       >
         <Trash2 size={20} />

@@ -23,6 +23,11 @@ export const useKeranjang = () => {
     // Jangan cache terlalu lama karena bisa di-update
     staleTime: 1000 * 30, // 30 detik
     enabled: !!token, // HANYA fetch keranjang ke API jika user sudah punya token
+    select: (data) => {
+      // Fix bug: sort items alphabetically by menuName so their positions don't change on update
+      const sortedItems = [...data.items].sort((a, b) => a.menuName.localeCompare(b.menuName));
+      return { ...data, items: sortedItems };
+    },
   });
 };
 

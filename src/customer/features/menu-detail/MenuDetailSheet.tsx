@@ -148,14 +148,14 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
 
                 <div className="flex items-center gap-[12px] w-full">
                   {/* Category Pill */}
-                  <div className="bg-[rgba(101,154,157,0.2)] border border-[rgba(101,154,157,0.3)] px-[13px] py-[5px] rounded-full">
-                    <span className="font-sans font-bold text-[#316669] text-[12px] leading-[16px] tracking-[0.6px]">
+                  <div className="bg-teal-muted/20 border border-teal-muted/30 px-[13px] py-[5px] rounded-full">
+                    <span className="font-sans font-bold text-teal-muted text-[12px] leading-[16px] tracking-[0.6px]">
                       {menu?.category}
                     </span>
                   </div>
 
                   {/* Price */}
-                  <span className="font-sans font-semibold text-[#ff5722] text-[18px] leading-[24px]">
+                  <span className="font-sans font-semibold text-deep-orange text-[18px] leading-[24px]">
                     {formatRupiah(menu?.price || 0)}
                   </span>
                 </div>
@@ -202,7 +202,7 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
                 <div className="flex flex-col gap-[16px] px-[20px] w-full">
                   <label
                     htmlFor="catatan-khusus"
-                    className="font-serif font-semibold text-[#1a1c1c] text-[20px] leading-[28px]"
+                    className="font-serif font-semibold text-[#1a1c1c] text-[18px] leading-[28px]"
                   >
                     Catatan Khusus (opsional)
                   </label>
@@ -211,7 +211,7 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
                     value={catatan}
                     onChange={(e) => setCatatan(e.target.value)}
                     placeholder="Contoh: Tanpa bawang goreng, kecap dipisah..."
-                    className="w-full h-[96px] bg-white border border-[rgba(26,28,28,0.15)] rounded-[12px] p-[17px] font-sans font-normal text-[16px] leading-[24px] text-[#6b7280] resize-none focus:outline-none focus:border-teal-muted"
+                    className="w-full min-h-[96px] bg-white border border-slate-dark/20 rounded-lg p-4 font-sans font-normal text-[14px] leading-[22px] text-slate-dark placeholder:text-slate-dark/40 resize-none focus:outline-none focus:border-teal-muted focus:ring-1 focus:ring-teal-muted"
                   />
                 </div>
 
@@ -235,29 +235,27 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
                 onClick={handleAddToCart}
                 disabled={isAddingToCart || (showSpiceError && !isFormValid)}
                 className={cn(
-                  'flex-1 h-[56px] rounded-[16px] flex items-center justify-center transition-all',
+                  'flex-1 h-[52px] rounded-xl flex items-center justify-center transition-transform active:scale-[0.98]',
                   !isFormValid
-                    ? 'bg-[rgba(48,56,65,0.2)] text-[rgba(48,56,65,0.4)]'
-                    : 'bg-[#ff5722] text-white shadow-[0_4px_12px_rgba(255,87,34,0.3)] active:scale-[0.98]',
+                    ? 'bg-slate-dark/30 text-slate-dark/60 cursor-not-allowed'
+                    : 'bg-deep-orange text-white shadow-[0_4px_12px_rgba(255,87,34,0.3)]',
                 )}
               >
-                <div
-                  className={cn(
-                    'font-serif font-semibold text-[18px] leading-[24px] text-center flex flex-col',
-                    !isFormValid ? 'text-[rgba(48,56,65,0.4)]' : 'text-white',
-                  )}
-                >
+                <div className="font-sans font-semibold text-[14px] leading-[18px] text-center flex flex-col items-center justify-center">
                   {!isFormValid ? (
                     <>
-                      <span className="leading-[24px]">Pilih tingkat</span>
-                      <span className="leading-[24px]">kepedasan dulu</span>
+                      <span>Pilih tingkat</span>
+                      <span>kepedasan dulu</span>
                     </>
                   ) : (
-                    <span className="leading-[24px]">
-                      {isAddingToCart
-                        ? 'Menambahkan...'
-                        : `Tambah ke Keranjang — ${formatRupiah(totalPrice)}`}
-                    </span>
+                    <>
+                      <span>
+                        {isAddingToCart ? 'Menambahkan...' : 'Tambah ke Keranjang'}
+                      </span>
+                      {!isAddingToCart && (
+                        <span>— {formatRupiah(totalPrice)}</span>
+                      )}
+                    </>
                   )}
                 </div>
               </button>

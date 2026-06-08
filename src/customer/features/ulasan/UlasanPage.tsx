@@ -1,7 +1,7 @@
 import { apiClient } from '@shared/lib/axios';
 import type { PesananResponse } from '@shared/types/pesanan.types';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Search, Globe } from 'lucide-react';
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -100,20 +100,25 @@ const UlasanPage: FC = () => {
 
   return (
     <div className="flex flex-col w-full pb-8">
-      {/* Top App Bar */}
-      <div className="flex items-center justify-between mb-6 px-2">
+      {/* Top App Bar — sesuai Figma Frame 16: bg #f9f9f9, border #e4beb4 */}
+      <div className="h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center justify-between px-[20px]">
+        {/* Kiri: Back button */}
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-transparent"
+          className="w-[16px] h-[16px] flex items-center justify-center text-[#b02f00] active:opacity-70"
           aria-label="Kembali"
         >
-          <ChevronLeft className="w-6 h-6 text-slate-dark" />
+          <ChevronLeft size={16} />
         </button>
-        <h1 className="font-serif font-semibold text-[20px] text-slate-dark">Aroma Senja</h1>
-        <div className="w-10 h-10" />
+        {/* Tengah: Brand */}
+        <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">Aroma Senja</h1>
+        {/* Kanan: Search icon */}
+        <button aria-label="Cari" className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00] active:opacity-70">
+          <Search size={18} />
+        </button>
       </div>
 
-      <div className="flex flex-col gap-6 w-full">
+      <div className="flex flex-col gap-6 w-full px-5 pt-6">
         {/* Hero Rating Section */}
         <div className="flex flex-col items-center justify-center gap-2">
           <div className="w-16 h-16 rounded-full bg-[#3f4851] flex items-center justify-center shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)] mb-2">
@@ -183,7 +188,7 @@ const UlasanPage: FC = () => {
         {/* Toggle Section */}
         <div className="flex items-center justify-between pb-2">
           <div className="flex items-center gap-3">
-            <span className="text-xl">👤</span>
+            <Globe className="w-5 h-5 text-slate-dark/60" />
             <p className="font-sans text-[16px] text-slate-dark">Tampilkan ulasan secara publik</p>
           </div>
           <button
@@ -200,6 +205,13 @@ const UlasanPage: FC = () => {
             />
           </button>
         </div>
+
+        {/* Error Message */}
+        {submitMutation.isError && (
+          <div className="text-red-500 text-[14px] font-sans bg-red-50 p-3 rounded-xl border border-red-100 animate-fade-in -mt-2">
+            {submitMutation.error?.response?.data?.message || submitMutation.error?.message || 'Gagal mengirim ulasan.'}
+          </div>
+        )}
 
         {/* Submit Button */}
         <button

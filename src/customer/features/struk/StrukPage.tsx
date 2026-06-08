@@ -1,4 +1,4 @@
-import { ChevronLeft, MessageSquareHeart } from 'lucide-react';
+import { ChevronLeft, MessageSquareHeart, Share2, Utensils } from 'lucide-react';
 import type { FC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import StrukCard from './components/StrukCard';
@@ -36,21 +36,25 @@ const StrukPage: FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-full">
-      {/* Top App Bar */}
-      <div className="flex items-center justify-between mb-6 px-2">
+    <div className="flex flex-col min-h-screen bg-slate-dark text-white">
+      {/* Top App Bar — sesuai Figma Frame 15: dark bg #303841, Aroma Senja putih */}
+      <div className="h-[64px] bg-slate-dark shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center justify-between px-[20px] shrink-0">
+        {/* Kiri: Back + Brand */}
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm"
+          className="flex items-center gap-[8px] active:opacity-70 transition-opacity"
           aria-label="Kembali"
         >
-          <ChevronLeft className="w-5 h-5 text-slate-dark" />
+          <ChevronLeft size={16} className="text-[#f9f9f9]" />
+          <span className="font-serif font-semibold text-[20px] text-[#f9f9f9] leading-[28px] whitespace-nowrap">Aroma Senja</span>
         </button>
-        <h1 className="font-serif font-semibold text-[20px] text-slate-dark">Aroma Senja</h1>
-        <div className="w-10 h-10" /> {/* Spacer */}
+        {/* Kanan: Share icon */}
+        <button aria-label="Bagikan" className="w-[18px] h-[20px] flex items-center justify-center text-[#f9f9f9] active:opacity-70">
+          <Share2 size={18} />
+        </button>
       </div>
 
-      <div className="flex-1 flex flex-col w-full relative z-10 px-2 pb-8">
+      <div className="flex-1 flex flex-col w-full relative z-10 px-[20px] pt-6 pb-8">
         <StrukCard data={strukData} />
 
         {/* External Action Buttons */}
@@ -65,9 +69,10 @@ const StrukPage: FC = () => {
 
           <button
             onClick={() => navigate('/customer/katalog')}
-            className="w-full bg-transparent border-2 border-slate-dark/20 text-slate-dark font-sans font-medium text-[16px] h-[56px] rounded-xl active:scale-[0.98] transition-transform flex items-center justify-center"
+            className="w-full bg-transparent border-2 border-off-white/35 text-off-white font-sans font-medium text-[16px] h-[56px] rounded-xl active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
           >
-            Kembali ke Menu Utama
+            <Utensils className="w-[18px] h-[18px]" />
+            Kembali ke Menu
           </button>
         </div>
       </div>
@@ -76,3 +81,4 @@ const StrukPage: FC = () => {
 };
 
 export default StrukPage;
+

@@ -1,4 +1,4 @@
-import { ArrowLeft, Edit3, ShoppingBag } from 'lucide-react';
+import { ChevronLeft, Edit3, ShoppingBag } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useKalkulasiPoin, usePoinBalance } from '../poin/hooks/usePoin';
@@ -7,11 +7,17 @@ import PoinToggle from './components/PoinToggle';
 import RingkasanBiaya from './components/RingkasanBiaya';
 import { useKeranjang } from './hooks/useKeranjang';
 import { useKeranjangStore } from './store/keranjangStore';
+import { useScanMeja } from '../onboarding/hooks/useScanMeja';
 
 const KeranjangPage = () => {
   const navigate = useNavigate();
   const { data: keranjang, isLoading } = useKeranjang();
   const { catatanPesanan, setCatatanPesanan, gunakanPoin } = useKeranjangStore();
+
+  // Ambil data meja dari localStorage + API
+  const rawMejaId = localStorage.getItem('nomorMeja') ?? '';
+  const { data: scanData } = useScanMeja(rawMejaId);
+  const nomorMejaDisplay = scanData?.nomorMeja ?? (rawMejaId ? '...' : '-');
 
   // Data diskon dari API jika toggle poin menyala
   const { data: balanceData } = usePoinBalance();
@@ -47,26 +53,32 @@ const KeranjangPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-off-white relative">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-off-white/80 backdrop-blur-md px-4 py-4 flex items-center">
+      {/* Header — sesuai Figma Frame 08: bg #f9f9f9, border bawah #e4beb4 */}
+      <header className="sticky top-0 z-50 h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] shadow-[0px_1px_1px_rgba(0,0,0,0.05)] px-[20px] flex items-center justify-between">
+        {/* Kiri: Kembali */}
         <button
           onClick={() => navigate('/customer/katalog')}
-          className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-200/50 transition-colors"
+          className="flex items-center gap-[8px] active:opacity-70 transition-opacity"
           aria-label="Kembali"
         >
-          <ArrowLeft size={24} className="text-slate-dark" />
+          <ChevronLeft size={16} className="text-[#5b4039]" />
+          <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">Kembali</span>
         </button>
-        <h1 className="font-serif font-bold text-[20px] text-slate-dark flex-1 text-center pr-10">
+        {/* Tengah: Judul */}
+        <h1 className="absolute left-1/2 -translate-x-1/2 font-sans font-bold text-[20px] text-[#1a1c1c] leading-[28px] whitespace-nowrap">
           Keranjang
         </h1>
+        {/* Kanan: spacer (simetris dengan tombol kembali) */}
+        <div className="w-[82px]" />
       </header>
 
       <main className="flex-1 px-4 pb-[100px]">
-        {/* Table Chip */}
+        {/* Table Information Chip — sesuai Figma Frame 08 */}
         <div className="flex justify-center mt-2 mb-6">
           <div className="bg-teal-muted/10 border border-teal-muted/20 px-4 py-1.5 rounded-full flex items-center gap-2">
+            <span className="text-[11px]">📍</span>
             <span className="font-sans font-semibold text-[12px] text-teal-muted uppercase tracking-wide">
-              🍽 APP DEMO QR BLM DARI MEJA
+              Pemesanan untuk Meja {nomorMejaDisplay}
             </span>
           </div>
         </div>

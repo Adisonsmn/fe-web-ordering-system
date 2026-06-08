@@ -1,6 +1,6 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import arrowSkip from '@/assets/arrow_skip.svg';
+import { ChevronLeft } from 'lucide-react';
 import LoginForm from './components/LoginForm';
 
 // Placeholder for Google Icon SVG
@@ -35,15 +35,6 @@ const GoogleIcon = () => (
 
 const LoginPage: FC = () => {
   const navigate = useNavigate();
-  const [nomorMeja, setNomorMeja] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Get stored table number on component mount
-    const storedTable = localStorage.getItem('nomorMeja');
-    if (storedTable) {
-      setNomorMeja(storedTable);
-    }
-  }, []);
 
   return (
     <div className="relative w-full min-h-screen bg-off-white select-none overflow-hidden flex flex-col font-sans z-0">
@@ -60,9 +51,7 @@ const LoginPage: FC = () => {
           onClick={() => navigate('/customer/auth-choice')}
           className="flex items-center gap-[8px] cursor-pointer active:scale-95 transition-transform"
         >
-          <div className="w-[13.33px] h-[13.33px] flex items-center justify-center rotate-180">
-            <img alt="" src={arrowSkip} className="w-full h-full object-contain" />
-          </div>
+          <ChevronLeft size={16} className="text-[#5b4039]" />
           <span className="text-[16px] font-sans font-normal text-[#5b4039]">Kembali</span>
         </button>
       </div>
@@ -74,15 +63,6 @@ const LoginPage: FC = () => {
           <h1 className="text-[24px] font-serif font-bold text-[#303841] leading-[32px]">
             Masuk ke Akun
           </h1>
-
-          {/* Meja Badge (hanya tampil jika ada di localStorage) */}
-          {nomorMeja && (
-            <div className="bg-[rgba(101,154,157,0.2)] border border-[rgba(101,154,157,0.3)] rounded-full px-[13px] py-[5px] flex items-center gap-[6px]">
-              <span className="text-[11px] font-sans font-normal text-[#316669] tracking-[0.55px] uppercase leading-[16.5px]">
-                MEJA {nomorMeja} SUDAH TERSIMPAN
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Login Form */}

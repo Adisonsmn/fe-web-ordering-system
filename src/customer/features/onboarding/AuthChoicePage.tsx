@@ -1,16 +1,19 @@
 import { useRestoStore } from '@shared/stores/restoStore';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import arrowSkip from '@/assets/arrow_skip.svg';
 import authDecor from '@/assets/auth_decor.png';
 import heroCoffee from '@/assets/hero_coffee.svg';
 import heroStar from '@/assets/hero_star.svg';
 import { useGuestLogin } from '../auth/hooks/useAuth';
+import { X } from 'lucide-react';
 
 const AuthChoicePage: FC = () => {
   const navigate = useNavigate();
   const restoName = useRestoStore((state) => state.restoName);
   const { mutate: guestLogin, isPending: isGuestLoggingIn } = useGuestLogin();
+
+  // Get table UUID from localStorage, fallback to dummy UUID if empty
+  const mejaIdFromQr = localStorage.getItem('nomorMeja') ?? '00000000-0000-0000-0000-000000000000';
 
   return (
     <div className="relative w-full min-h-screen bg-off-white select-none overflow-hidden flex flex-col font-sans">
@@ -29,11 +32,12 @@ const AuthChoicePage: FC = () => {
         {/* Right: Lewati Button */}
         <button
           type="button"
-          onClick={() => navigate('/customer/katalog')}
-          className="flex items-center gap-[8px] cursor-pointer active:scale-95 transition-transform py-2"
+          onClick={() => guestLogin({ tableId: mejaIdFromQr })}
+          disabled={isGuestLoggingIn}
+          className="flex items-center gap-[8px] cursor-pointer active:scale-95 transition-transform py-2 disabled:opacity-50"
         >
-          <img alt="" src={arrowSkip} className="w-[10.5px] h-[10.5px] object-contain" />
-          <span className="text-[16px] font-sans font-normal text-[#3f4851]">Lewati</span>
+          <X size={16} className="text-[#3f4851]" />
+          <span className="text-[16px] font-sans font-normal text-[#3f4851]">{isGuestLoggingIn ? 'Memproses...' : 'Lewati'}</span>
         </button>
       </div>
 
@@ -71,7 +75,7 @@ const AuthChoicePage: FC = () => {
           </h2>
 
           {/* Subtitle */}
-          <p className="text-[16px] font-sans font-normal text-slate-dark/70 text-center leading-[24px] max-w-[320px] mt-[12px] mb-[32px]">
+          <p className="text-[16px] font-sans font-normal text-[#5b4039] text-center leading-[24px] max-w-[320px] mt-[12px] mb-[32px]">
             Masuk atau daftar untuk mengumpulkan poin loyalitas dan melihat riwayat pesanan kamu.
           </p>
 
@@ -80,7 +84,7 @@ const AuthChoicePage: FC = () => {
             {/* Bento Card 1: Poin */}
             <div className="bg-white rounded-[12px] p-[12px] flex flex-col gap-[8px] items-center justify-center drop-shadow-[0_4px_10px_rgba(48,56,65,0.08)] border border-slate-dark/5">
               <span className="text-[18px] leading-[28px] filter saturate-[0.85]">🎁</span>
-              <span className="text-[12px] font-sans font-bold text-slate-dark/80 tracking-[0.6px] leading-[16px]">
+              <span className="text-[12px] font-sans font-bold text-[#5b4039] tracking-[0.6px] leading-[16px]">
                 Poin
               </span>
             </div>
@@ -88,7 +92,7 @@ const AuthChoicePage: FC = () => {
             {/* Bento Card 2: Riwayat */}
             <div className="bg-white rounded-[12px] p-[12px] flex flex-col gap-[8px] items-center justify-center drop-shadow-[0_4px_10px_rgba(48,56,65,0.08)] border border-slate-dark/5">
               <span className="text-[18px] leading-[28px] filter saturate-[0.85]">📋</span>
-              <span className="text-[12px] font-sans font-bold text-slate-dark/80 tracking-[0.6px] leading-[16px]">
+              <span className="text-[12px] font-sans font-bold text-[#5b4039] tracking-[0.6px] leading-[16px]">
                 Riwayat
               </span>
             </div>
@@ -96,7 +100,7 @@ const AuthChoicePage: FC = () => {
             {/* Bento Card 3: Promo */}
             <div className="bg-white rounded-[12px] p-[12px] flex flex-col gap-[8px] items-center justify-center drop-shadow-[0_4px_10px_rgba(48,56,65,0.08)] border border-slate-dark/5">
               <span className="text-[18px] leading-[28px] filter saturate-[0.85]">🏷️</span>
-              <span className="text-[12px] font-sans font-bold text-slate-dark/80 tracking-[0.6px] leading-[16px]">
+              <span className="text-[12px] font-sans font-bold text-[#5b4039] tracking-[0.6px] leading-[16px]">
                 Promo
               </span>
             </div>
@@ -126,7 +130,7 @@ const AuthChoicePage: FC = () => {
           {/* Button 3: Lanjut sebagai Tamu */}
           <button
             type="button"
-            onClick={() => guestLogin({ tableId: '00000000-0000-0000-0000-000000000000' })}
+            onClick={() => guestLogin({ tableId: mejaIdFromQr })}
             disabled={isGuestLoggingIn}
             className="w-full text-teal-muted font-sans font-bold text-[16px] py-[12px] active:scale-[0.98] transition-all duration-200 text-center cursor-pointer hover:opacity-80 disabled:opacity-50"
           >

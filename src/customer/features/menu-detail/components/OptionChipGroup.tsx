@@ -34,19 +34,19 @@ const OptionChipGroup: FC<OptionChipGroupProps> = ({
       <div className="flex items-center justify-between w-full px-[20px]">
         <div className="flex items-center gap-[8px]">
           <div className="text-[20px] leading-[30px]">{emoji}</div>
-          <div className="font-serif font-semibold text-[#1a1c1c] text-[20px] leading-[28px]">
+          <div className="font-serif font-semibold text-slate-dark text-[18px] leading-[26px]">
             {label}
           </div>
         </div>
 
         {required ? (
-          <div className="bg-[#ff5722] rounded-[4px] px-[8px] py-[4px]">
+          <div className="bg-deep-orange rounded-[4px] px-[8px] py-[4px]">
             <span className="font-sans font-normal text-white text-[10px] tracking-[0.5px] uppercase">
               WAJIB DIPILIH
             </span>
           </div>
         ) : (
-          <div className="bg-[#76abae] rounded-[4px] px-[8px] py-[4px]">
+          <div className="bg-teal-muted rounded-[4px] px-[8px] py-[4px]">
             <span className="font-sans font-normal text-white text-[10px] tracking-[0.5px] uppercase">
               OPSIONAL
             </span>
@@ -59,7 +59,7 @@ const OptionChipGroup: FC<OptionChipGroupProps> = ({
           className={cn(
             'flex flex-wrap gap-[12px] pb-2',
             hasError
-              ? 'border-2 border-dashed border-[#ff5722] rounded-[16px] p-2 -ml-2 -mt-2'
+              ? 'border-2 border-dashed border-deep-orange rounded-[16px] p-2 -ml-2 -mt-2'
               : '',
           )}
         >
@@ -73,15 +73,15 @@ const OptionChipGroup: FC<OptionChipGroupProps> = ({
               chipClasses = cn(
                 chipClasses,
                 isSpice
-                  ? 'bg-[#ff5722] border-[#ff5722] text-white'
-                  : 'bg-[#76abae] border-[#76abae] text-white',
+                  ? 'bg-deep-orange border-deep-orange text-white'
+                  : 'bg-teal-muted border-teal-muted text-white',
               );
             } else {
               chipClasses = cn(
                 chipClasses,
                 isSpice
-                  ? 'border-[#e4beb4] text-[rgba(26,28,28,0.7)] bg-white'
-                  : 'border-[rgba(118,171,174,0.4)] text-[rgba(26,28,28,0.7)] bg-white',
+                  ? 'border-deep-orange/30 text-slate-dark/70 bg-white'
+                  : 'border-teal-muted/40 text-slate-dark/70 bg-white',
               );
             }
 
@@ -102,7 +102,7 @@ const OptionChipGroup: FC<OptionChipGroupProps> = ({
         </div>
 
         {hasError && (
-          <div className="flex items-center gap-1 mt-2 text-[#ff5722] text-[12px] font-sans">
+          <div className="flex items-center gap-1 mt-2 text-deep-orange text-[12px] font-sans">
             <span className="text-[14px]">⚠️</span>
             <span>Silakan pilih tingkat kepedasan terlebih dahulu</span>
           </div>

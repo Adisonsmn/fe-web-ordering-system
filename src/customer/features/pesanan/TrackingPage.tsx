@@ -1,6 +1,8 @@
 import { formatJam } from '@shared/utils/date';
-import { CheckCircle2, ChevronLeft, HelpCircle, Receipt, Star } from 'lucide-react';
+import { CheckCircle2, ChevronLeft, HelpCircle, Receipt, Search, Star } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import BottomNav from '@shared/components/layout/BottomNav';
 import EstimasiBanner from './components/EstimasiBanner';
 import OrderItemList from './components/OrderItemList';
 import TrackingStatusCard from './components/TrackingStatusCard';
@@ -11,6 +13,12 @@ const TrackingPage = () => {
   const { pesananId } = useParams<{ pesananId: string }>();
   const navigate = useNavigate();
   const { data: pesanan, isLoading, isError } = usePesananStatus(pesananId || '');
+
+  useEffect(() => {
+    if (pesananId) {
+      localStorage.setItem('activePesananId', pesananId);
+    }
+  }, [pesananId]);
 
   if (isLoading) {
     return (
@@ -40,14 +48,16 @@ const TrackingPage = () => {
   const isCompleted = pesanan.status === 'SERVED' || pesanan.status === 'PAID';
 
   return (
-    <div className="flex flex-col min-h-screen bg-off-white max-w-[390px] mx-auto w-full relative pb-[90px]">
-      {/* Top App Bar */}
-      <header className="h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] flex items-center justify-between px-5 sticky top-0 z-50">
-        <button type="button" onClick={() => navigate('/customer/katalog')} className="p-2 -ml-2">
-          <ChevronLeft className="w-6 h-6 text-slate-dark" />
+    <div className="flex flex-col min-h-screen bg-off-white max-w-[390px] mx-auto w-full relative pb-[120px]">
+      {/* Top App Bar — sesuai Figma Frame 11: bg #f9f9f9, border #e4beb4 */}
+      <header className="h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center justify-between px-[20px] sticky top-0 z-50">
+        <button type="button" onClick={() => navigate('/customer/katalog')} className="w-[16px] h-[16px] flex items-center justify-center text-[#b02f00] active:opacity-70">
+          <ChevronLeft className="w-[16px] h-[16px]" />
         </button>
-        <h1 className="font-serif font-bold text-[20px] text-deep-orange">Aroma Senja</h1>
-        <div className="w-6" /> {/* Spacer for centering */}
+        <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">Aroma Senja</h1>
+        <button type="button" aria-label="Cari" className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00] active:opacity-70">
+          <Search className="w-[18px] h-[18px]" />
+        </button>
       </header>
 
       {isCompleted ? (
@@ -261,6 +271,8 @@ const TrackingPage = () => {
           </div>
         </div>
       )}
+
+      <BottomNav />
     </div>
   );
 };

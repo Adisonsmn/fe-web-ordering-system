@@ -56,6 +56,10 @@ export interface PoinBalanceResponse {
   rupiahPerPoin: number;
 }
 
+export interface PoinEstimasiResponse {
+  estimatedPoints: number;
+}
+
 export interface PoinKalkulasiRequest {
   pesananSubtotal: number;
   poinDigunakan: number;
@@ -71,6 +75,7 @@ export interface StrukItem {
   quantity: number;
   hargaSetelahDiskon: number;
   subTotal: number;
+  catatan: string | null;
 }
 
 export interface StrukPesananResponse {

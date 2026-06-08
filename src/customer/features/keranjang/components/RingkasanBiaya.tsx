@@ -12,7 +12,7 @@ const RingkasanBiaya: FC<RingkasanBiayaProps> = ({ subtotal, diskonPoin }) => {
   const total = subtotal + pajak - diskonPoin;
 
   return (
-    <div className="mt-8 border-t-2 border-[#e4beb4] pt-6 pb-24">
+    <div className="mt-8 border-t border-[#e4beb4] pt-6 pb-24">
       <h3 className="font-serif font-bold text-[18px] text-slate-dark mb-4">Ringkasan Biaya</h3>
 
       <div className="space-y-3">

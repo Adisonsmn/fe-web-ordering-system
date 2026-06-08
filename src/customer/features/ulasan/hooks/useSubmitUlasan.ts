@@ -1,4 +1,5 @@
-import type { CreateRatingRequest } from '@shared/types/rating.types';
+import type { CreateRatingRequest, RatingResponse } from '@shared/types/rating.types';
+import type { ApiError } from '@customer/features/auth/hooks/useAuth';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { submitRating } from '../api/rating.api';
@@ -6,14 +7,14 @@ import { submitRating } from '../api/rating.api';
 export const useSubmitUlasan = () => {
   const navigate = useNavigate();
 
-  return useMutation({
+  return useMutation<RatingResponse, ApiError, CreateRatingRequest>({
     mutationFn: (payload: CreateRatingRequest) => submitRating(payload),
     onSuccess: () => {
       // Navigate to success page
       navigate('/customer/ulasan-sukses');
     },
-    onError: (error: Error) => {
-      console.error('Gagal mengirim ulasan:', error.message);
+    onError: (error: ApiError) => {
+      console.error('Gagal mengirim ulasan:', error.message || error.response?.data?.message);
     },
   });
 };

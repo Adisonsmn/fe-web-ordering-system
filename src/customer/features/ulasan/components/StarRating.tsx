@@ -35,8 +35,8 @@ const StarRating: FC<StarRatingProps> = ({ value, onChange, size = 'md', readonl
             className={cn(
               sizeClasses[size],
               star <= value
-                ? 'fill-[#ffdba0] text-[#ffdba0]' // Figma design token equivalent for star gold
-                : 'fill-slate-dark/10 text-slate-dark/10', // Empty star
+                ? 'fill-deep-orange text-deep-orange' // Filled star in brand orange
+                : 'fill-transparent text-slate-dark/40', // Empty star as outline
             )}
           />
         </button>

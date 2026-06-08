@@ -18,7 +18,7 @@ const QuantityStepper: FC<QuantityStepperProps> = ({
   return (
     <div
       className={cn(
-        'bg-[#f3f3f3] border border-[rgba(228,190,180,0.3)] rounded-[16px] shrink-0',
+        'bg-[#f3f3f3] border border-[rgba(228,190,180,0.3)] rounded-xl shrink-0',
         className,
       )}
     >
