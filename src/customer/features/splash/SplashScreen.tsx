@@ -7,7 +7,7 @@ const SplashScreen: FC = () => {
   const navigate = useNavigate();
 
   // Ambil data konfigurasi operasional restoran
-  const { data, isLoading } = useRestoConfig();
+  const { data, isLoading, isError } = useRestoConfig();
 
   const [minimumDelayPassed, setMinimumDelayPassed] = useState(false);
 
@@ -38,14 +38,15 @@ const SplashScreen: FC = () => {
 
   useEffect(() => {
     // Alihkan rute jika durasi minimal sudah terlewati dan pemanggilan REST API selesai
-    if (minimumDelayPassed && !isLoading) {
-      if (data && !data.isOpen) {
+    // Jika API error (mis. env var tidak di-set di Vercel), tetap lanjutkan ke welcome
+    if (minimumDelayPassed && (!isLoading || isError)) {
+      if (!isError && data && !data.isOpen) {
         // Do not redirect, stay on splash screen to show closed message
       } else {
         navigate('/customer/welcome', { replace: true });
       }
     }
-  }, [minimumDelayPassed, isLoading, navigate, data]);
+  }, [minimumDelayPassed, isLoading, isError, navigate, data]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-dark relative overflow-hidden px-[20px]">
