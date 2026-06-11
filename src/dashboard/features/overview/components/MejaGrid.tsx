@@ -11,6 +11,12 @@ export const MejaGrid: FC<MejaGridProps> = ({ mejaList = [], isLoading }) => {
   // Sort by table number to ensure they appear in order 1..20
   const sortedMeja = [...mejaList].sort((a, b) => a.nomorMeja - b.nomorMeja);
 
+  const getMejaStatus = (meja: MejaResponse) => {
+    if (meja.mejaStatus) return meja.mejaStatus;
+    if (!meja.isOccupied) return 'AVAILABLE';
+    return 'OCCUPIED';
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 border border-slate-dark/5">
       <div className="flex justify-between items-center mb-6">
@@ -19,11 +25,11 @@ export const MejaGrid: FC<MejaGridProps> = ({ mejaList = [], isLoading }) => {
         {/* Legend */}
         <div className="flex gap-4 items-center">
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-teal-muted"></div>
+            <div className="w-2.5 h-2.5 rounded-sm bg-deep-orange" />
             <span className="text-[11px] font-semibold text-slate-dark/70 uppercase">Terisi</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded bg-slate-dark/10"></div>
+            <div className="w-2.5 h-2.5 rounded-sm bg-[#e2e2e2]" />
             <span className="text-[11px] font-semibold text-slate-dark/70 uppercase">Kosong</span>
           </div>
         </div>
@@ -44,12 +50,12 @@ export const MejaGrid: FC<MejaGridProps> = ({ mejaList = [], isLoading }) => {
           </div>
         ) : (
           sortedMeja.map((meja) => {
-            // For now, mapping OCCUPIED to teal, AVAILABLE to light grey.
-            // "BILLING" status is not explicitly in the backend boolean yet (isOccupied only),
-            // but we'll prepare the styling for it.
-            const statusClass = meja.isOccupied
-              ? 'bg-teal-muted text-white shadow-md shadow-teal-muted/20 border border-teal-muted'
-              : 'bg-slate-dark/5 text-slate-dark/50 border border-transparent';
+            const status = getMejaStatus(meja);
+            const statusClass = {
+              AVAILABLE: 'bg-[#f3f3f3] text-[#5b4039] border border-transparent',
+              OCCUPIED:
+                'bg-deep-orange text-white border border-deep-orange shadow-md shadow-deep-orange/20',
+            }[status];
 
             return (
               <div
@@ -62,8 +68,8 @@ export const MejaGrid: FC<MejaGridProps> = ({ mejaList = [], isLoading }) => {
                 <span className="text-[18px] font-serif font-bold mb-1">
                   {String(meja.nomorMeja).padStart(2, '0')}
                 </span>
-                <span className="text-[8px] font-semibold uppercase tracking-wider opacity-80">
-                  {meja.isOccupied ? 'OCCUPIED' : 'AVAILABLE'}
+                <span className="text-[8px] font-semibold uppercase tracking-wider opacity-85">
+                  {status}
                 </span>
               </div>
             );

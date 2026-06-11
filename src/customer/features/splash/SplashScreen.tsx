@@ -18,6 +18,16 @@ const SplashScreen: FC = () => {
       localStorage.setItem('nomorMeja', tableParam);
     }
 
+    // Generate and store persistent deviceToken if not exists
+    let deviceToken = localStorage.getItem('deviceToken');
+    if (!deviceToken) {
+      deviceToken =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : 'fallback-' + Date.now() + '-' + Math.random().toString(36).substring(2);
+      localStorage.setItem('deviceToken', deviceToken);
+    }
+
     // Durasi minimal splash screen ditampilkan (2.5 detik)
     const timer = setTimeout(() => {
       setMinimumDelayPassed(true);

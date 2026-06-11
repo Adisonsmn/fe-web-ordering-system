@@ -26,6 +26,7 @@ export interface AuthState {
     user: UserProfile | null,
     isGuest: boolean,
   ) => void;
+  setUser: (user: UserProfile | null) => void;
   clearAuth: () => void;
 }
 
@@ -42,6 +43,10 @@ export const useAuthStore = create<AuthState>()(
           state.refreshToken = refreshToken;
           state.user = user;
           state.isGuest = isGuest;
+        }),
+      setUser: (user) =>
+        set((state) => {
+          state.user = user;
         }),
       clearAuth: () =>
         set((state) => {

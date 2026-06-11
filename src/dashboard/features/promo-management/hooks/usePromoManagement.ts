@@ -1,5 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createPromo, deletePromo, getPromoList, updatePromo } from '../api/promo.api';
+import {
+  createPromo,
+  deletePromo,
+  getPromoHistory,
+  getPromoList,
+  updatePromo,
+} from '../api/promo.api';
 
 export const promoKeys = {
   all: ['promo'] as const,
@@ -10,6 +16,14 @@ export const usePromoList = (status?: string) => {
   return useQuery({
     queryKey: promoKeys.list(status),
     queryFn: () => getPromoList(status),
+  });
+};
+
+export const usePromoHistory = (promoId: string, page = 0, size = 10) => {
+  return useQuery({
+    queryKey: [...promoKeys.all, 'history', promoId, page, size] as const,
+    queryFn: () => getPromoHistory(promoId, page, size),
+    enabled: !!promoId,
   });
 };
 

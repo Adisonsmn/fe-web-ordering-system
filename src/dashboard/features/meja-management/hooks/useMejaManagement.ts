@@ -4,6 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { createMeja, deleteMeja, getAllMeja, updateMejaStatus } from '../api/meja.api';
 
+
+
 export const mejaKeys = {
   all: ['meja-management'] as const,
   list: () => [...mejaKeys.all, 'list'] as const,
@@ -19,25 +21,20 @@ export const useMejaAdmin = () => {
   });
 
   useEffect(() => {
-    // Subscribe to realtime status update
+    // Subscribe ke WS meja-status agar Dashboard Meja dapat real-time update
+    // meski OverviewPage tidak sedang dibuka (useMejaList tidak aktif)
     const unsub = subscribe('/topic/admin/meja-status', (payload: MejaStatusWsPayload) => {
-      // Optimistic update
       queryClient.setQueryData<MejaResponse[]>(mejaKeys.list(), (old) => {
         if (!old) return old;
         return old.map((m) =>
-          m.mejaId === payload.mejaId ? { ...m, isOccupied: payload.isOccupied } : m,
+          m.mejaId === payload.mejaId
+            ? { ...m, isOccupied: payload.isOccupied, mejaStatus: payload.status }
+            : m,
         );
       });
-      // We also might want to invalidate overview's meja list if it's currently rendered,
-      // but usually React Query will handle it if the keys are aligned.
-      // Wait, Overview uses ['dashboard', 'meja'], we should probably invalidate that too
-      // just in case we navigate back to dashboard.
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'meja'] });
     });
 
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, [queryClient, subscribe]);
 
   return query;
@@ -49,7 +46,6 @@ export const useCreateMeja = () => {
     mutationFn: createMeja,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: mejaKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'meja'] });
     },
   });
 };
@@ -60,7 +56,6 @@ export const useDeleteMeja = () => {
     mutationFn: deleteMeja,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: mejaKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'meja'] });
     },
   });
 };
@@ -72,7 +67,6 @@ export const useUpdateMejaStatus = () => {
     onSuccess: () => {
       // Invalidate to make sure we have the latest data
       queryClient.invalidateQueries({ queryKey: mejaKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'meja'] });
     },
   });
 };

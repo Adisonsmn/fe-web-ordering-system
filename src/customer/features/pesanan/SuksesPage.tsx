@@ -1,14 +1,20 @@
 import { formatRupiah } from '@shared/utils/currency';
 import { CheckCircle2, ChevronLeft } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import StatusTimeline from './components/StatusTimeline';
-import { usePesananDetail } from './hooks/useBuatPesanan';
+import { usePesananStatus } from './hooks/usePesananStatus';
 
 const SuksesPage = () => {
   const { pesananId } = useParams<{ pesananId: string }>();
   const navigate = useNavigate();
-  const { data: pesanan, isLoading, isError, error } = usePesananDetail(pesananId || '');
+  const { data: pesanan, isLoading, isError, error } = usePesananStatus(pesananId || '');
+
+  useEffect(() => {
+    if (pesanan && pesanan.status !== 'NEW' && pesanan.status !== 'CONFIRMED') {
+      navigate(`/customer/pesanan/tracking/${pesananId}`, { replace: true });
+    }
+  }, [pesanan?.status, navigate, pesananId]);
 
   useEffect(() => {
     if (pesananId) {
@@ -105,7 +111,9 @@ const SuksesPage = () => {
               </p>
             </div>
             <div className="text-right flex flex-col items-end">
-              <p className="font-sans text-[16px] text-[#5b4039] uppercase tracking-wider">TOTAL PEMBAYARAN</p>
+              <p className="font-sans text-[16px] text-[#5b4039] uppercase tracking-wider">
+                TOTAL PEMBAYARAN
+              </p>
               <p className="font-sans font-normal text-[16px] text-[#b02f00]">
                 {formatRupiah(pesanan.jumlahDibayar || pesanan.totalHarga)}
               </p>
@@ -116,7 +124,9 @@ const SuksesPage = () => {
         {/* Status Timeline Card */}
         <div className="backdrop-blur-[4px] bg-[rgba(255,255,255,0.95)] rounded-[12px] p-[24px] shadow-[0px_4px_20px_0px_rgba(48,56,65,0.08)] mb-6 flex flex-col gap-[24px]">
           <div className="flex flex-col items-center">
-            <h3 className="font-sans font-normal text-[16px] text-[#5b4039] tracking-wider">STATUS PESANAN</h3>
+            <h3 className="font-sans font-normal text-[16px] text-[#5b4039] tracking-wider">
+              STATUS PESANAN
+            </h3>
           </div>
 
           <StatusTimeline status={pesanan.status} />
@@ -147,7 +157,10 @@ const SuksesPage = () => {
           </div>
           <div className="flex flex-col gap-[16px]">
             {pesanan.detailPesanan.map((item) => (
-              <div key={item.detailPesananId} className="bg-white flex items-center justify-between p-[16px] rounded-[8px] w-full shadow-[0px_2px_8px_rgba(48,56,65,0.04)]">
+              <div
+                key={item.detailPesananId}
+                className="bg-white flex items-center justify-between p-[16px] rounded-[8px] w-full shadow-[0px_2px_8px_rgba(48,56,65,0.04)]"
+              >
                 <div className="flex gap-[16px] items-center">
                   <div className="w-[48px] h-[48px] rounded-[8px] bg-slate-200 shrink-0 overflow-hidden">
                     {item.imageUrl ? (
@@ -167,9 +180,7 @@ const SuksesPage = () => {
                     <p className="font-sans font-normal text-[12px] text-[#5b4039] mt-0.5">
                       {item.quantity}x
                       {item.catatan && (
-                        <span className="text-[#b02f00] ml-1">
-                          • "{item.catatan}"
-                        </span>
+                        <span className="text-[#b02f00] ml-1">• "{item.catatan}"</span>
                       )}
                     </p>
                   </div>

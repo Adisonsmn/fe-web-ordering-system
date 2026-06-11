@@ -1,7 +1,7 @@
-import { type FC } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Utensils, Receipt, Award, User } from 'lucide-react';
 import { cn } from '@shared/utils/cn';
+import { Award, Receipt, User, Utensils } from 'lucide-react';
+import type { FC } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const BottomNav: FC = () => {
   const navigate = useNavigate();
@@ -35,7 +35,9 @@ const BottomNav: FC = () => {
           <div
             className={cn(
               'px-5 py-1.5 rounded-full flex items-center justify-center transition-all duration-200',
-              isMenuRoute ? 'bg-deep-orange text-[#541200]' : 'text-[#5d656f] group-hover:bg-slate-100'
+              isMenuRoute
+                ? 'bg-deep-orange text-[#541200]'
+                : 'text-[#5d656f] group-hover:bg-slate-100',
             )}
           >
             <Utensils size={20} strokeWidth={isMenuRoute ? 2.5 : 2} />
@@ -43,7 +45,7 @@ const BottomNav: FC = () => {
           <span
             className={cn(
               'text-[12px] font-sans mt-1 transition-colors duration-200',
-              isMenuRoute ? 'font-bold text-[#303841]' : 'text-[#5d656f] font-semibold'
+              isMenuRoute ? 'font-bold text-[#303841]' : 'text-[#5d656f] font-semibold',
             )}
           >
             Menu
@@ -59,7 +61,9 @@ const BottomNav: FC = () => {
           <div
             className={cn(
               'px-5 py-1.5 rounded-full flex items-center justify-center transition-all duration-200',
-              isOrdersRoute ? 'bg-deep-orange text-[#541200]' : 'text-[#5d656f] group-hover:bg-slate-100'
+              isOrdersRoute
+                ? 'bg-deep-orange text-[#541200]'
+                : 'text-[#5d656f] group-hover:bg-slate-100',
             )}
           >
             <Receipt size={20} strokeWidth={isOrdersRoute ? 2.5 : 2} />
@@ -67,7 +71,7 @@ const BottomNav: FC = () => {
           <span
             className={cn(
               'text-[12px] font-sans mt-1 transition-colors duration-200',
-              isOrdersRoute ? 'font-bold text-[#303841]' : 'text-[#5d656f] font-semibold'
+              isOrdersRoute ? 'font-bold text-[#303841]' : 'text-[#5d656f] font-semibold',
             )}
           >
             Orders
@@ -83,9 +87,7 @@ const BottomNav: FC = () => {
           <div className="px-5 py-1.5 rounded-full flex items-center justify-center text-[#5d656f]">
             <Award size={20} strokeWidth={2} />
           </div>
-          <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">
-            Loyalty
-          </span>
+          <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">Loyalty</span>
         </button>
 
         {/* Tab Account (Disabled) */}
@@ -97,9 +99,7 @@ const BottomNav: FC = () => {
           <div className="px-5 py-1.5 rounded-full flex items-center justify-center text-[#5d656f]">
             <User size={20} strokeWidth={2} />
           </div>
-          <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">
-            Account
-          </span>
+          <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">Account</span>
         </button>
       </div>
     </div>

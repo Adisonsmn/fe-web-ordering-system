@@ -5,6 +5,7 @@ import RegisterPage from '../features/auth/RegisterPage';
 import KatalogPage from '../features/katalog/KatalogPage';
 import KeranjangPage from '../features/keranjang/KeranjangPage';
 import AuthChoicePage from '../features/onboarding/AuthChoicePage';
+import BlockedPage from '../features/onboarding/BlockedPage';
 import WelcomePage from '../features/onboarding/WelcomePage';
 import KonfirmasiPage from '../features/pesanan/KonfirmasiPage';
 import SuksesPage from '../features/pesanan/SuksesPage';
@@ -30,6 +31,10 @@ export const customerRoutes: RouteObject[] = [
       {
         path: 'welcome',
         element: <WelcomePage />,
+      },
+      {
+        path: 'blocked',
+        element: <BlockedPage />,
       },
       {
         path: 'auth-choice',

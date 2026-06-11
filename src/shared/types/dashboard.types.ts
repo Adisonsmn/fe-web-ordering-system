@@ -3,8 +3,10 @@
 export interface DashboardStatsResponse {
   pendapatanHariIni: number;
   totalPesananHariIni: number;
+  totalPesananSelesai: number;
   totalMejaAktif: number;
   avgRatingHariIni: number;
+  totalUlasanHariIni: number;
   avgOrderValue: number;
   totalPoinRedeemed: number;
   totalDiskonPromo: number;
@@ -56,4 +58,18 @@ export interface ActivityItem {
   title: string;
   description: string;
   timestamp: string;
+}
+
+export interface RatingSentimenResponse {
+  rating: number;
+  jumlah: number;
+  persentase: number;
+}
+
+export interface PoinPromoStatsResponse {
+  totalPoinDiterbitkan: number;
+  totalPoinDigunakan: number;
+  totalPoinHangus: number;
+  totalDiskonPromo: number;
+  totalPesananPromo: number;
 }

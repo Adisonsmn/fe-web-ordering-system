@@ -1,12 +1,12 @@
+import { useAuthStore } from '@shared/stores/authStore';
 import { formatRupiah } from '@shared/utils/currency';
 import { ChevronLeft, ChevronRight, MapPin, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@shared/stores/authStore';
 import { useKeranjang } from '../keranjang/hooks/useKeranjang';
 import { useKeranjangStore } from '../keranjang/store/keranjangStore';
+import { useMejaStore } from '../onboarding/store/mejaStore';
 import { useEstimasiPoin, useKalkulasiPoin, usePoinBalance } from '../poin/hooks/usePoin';
-import { useScanMeja } from '../onboarding/hooks/useScanMeja';
 import { useBuatPesanan } from './hooks/useBuatPesanan';
 
 const KonfirmasiPage = () => {
@@ -50,8 +50,8 @@ const KonfirmasiPage = () => {
   const DUMMY_MEJA_ID = '00000000-0000-0000-0000-000000000000';
   const mejaIdToUse = rawTableParam || DUMMY_MEJA_ID;
 
-  // Fetch scan/meja detail jika ada mejaId
-  const { data: scanData } = useScanMeja(rawTableParam);
+  // Ambil data meja dari store (sudah di-set oleh WelcomePage)
+  const scanData = useMejaStore((s) => s.scanData);
   const nomorMeja = scanData?.nomorMeja ?? (rawTableParam ? '...' : '7');
   const zoneMeja = scanData?.zone ?? 'Area Indoor';
 
@@ -108,7 +108,10 @@ const KonfirmasiPage = () => {
           </h1>
         </div>
         {/* Kanan: Search icon */}
-        <button aria-label="Cari" className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00]">
+        <button
+          aria-label="Cari"
+          className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00]"
+        >
           <Search size={18} />
         </button>
       </header>
@@ -168,9 +171,7 @@ const KonfirmasiPage = () => {
                     <p className="font-sans font-normal text-[14px] text-[#5b4039] leading-[20px]">
                       {item.quantity}x
                       {item.catatan && (
-                        <span className="text-[#b02f00] ml-1">
-                          • "{item.catatan}"
-                        </span>
+                        <span className="text-[#b02f00] ml-1">• "{item.catatan}"</span>
                       )}
                     </p>
                   </div>
@@ -193,7 +194,8 @@ const KonfirmasiPage = () => {
             </div>
           </div>
         ) : (
-          !isGuest && estimatedPoints > 0 && (
+          !isGuest &&
+          estimatedPoints > 0 && (
             <div className="bg-[#e0f2f1] border border-[#9ad0d3] rounded-[12px] p-[17px] flex gap-[16px] items-center mb-8">
               <div className="shrink-0 size-[20px] flex items-center justify-center">
                 <span className="text-[14px] leading-none">📍</span>
@@ -210,28 +212,36 @@ const KonfirmasiPage = () => {
         {/* Summary Card */}
         <div className="bg-[#eee] rounded-[12px] p-[16px] flex flex-col gap-[12px] mb-4">
           <div className="flex justify-between items-center h-[24px]">
-            <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">Subtotal</span>
+            <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">
+              Subtotal
+            </span>
             <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">
               {formatRupiah(keranjang.totalHarga)}
             </span>
           </div>
           {diskonPoin > 0 && (
             <div className="flex justify-between items-center h-[24px]">
-              <span className="font-sans font-normal text-[16px] text-[#316669] leading-[24px]">Loyalty Points</span>
+              <span className="font-sans font-normal text-[16px] text-[#316669] leading-[24px]">
+                Loyalty Points
+              </span>
               <span className="font-sans font-normal text-[16px] text-[#316669] leading-[24px]">
                 -{formatRupiah(diskonPoin)}
               </span>
             </div>
           )}
           <div className="flex justify-between items-center h-[24px]">
-            <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">Pajak & Layanan (10%)</span>
+            <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">
+              Pajak & Layanan (10%)
+            </span>
             <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">
               {formatRupiah(pajak)}
             </span>
           </div>
           <div className="border-[#e4beb4] border-t h-px my-1" />
           <div className="flex justify-between items-center h-[24px]">
-            <span className="font-serif font-normal text-[16px] text-[#1a1c1c] leading-[24px]">Total Bayar</span>
+            <span className="font-serif font-normal text-[16px] text-[#1a1c1c] leading-[24px]">
+              Total Bayar
+            </span>
             <span className="font-serif font-normal text-[16px] text-[#b02f00] leading-[24px]">
               {formatRupiah(totalAkhir > 0 ? totalAkhir : 0)}
             </span>
@@ -241,7 +251,9 @@ const KonfirmasiPage = () => {
         {/* Disclaimer */}
         <div className="flex flex-col items-center px-[16px] mt-6">
           <p className="font-sans italic font-normal text-[16px] text-center text-[#5b4039] leading-[24px]">
-            "Pesanan tidak dapat dibatalkan setelah<br />diproses oleh tim dapur kami."
+            "Pesanan tidak dapat dibatalkan setelah
+            <br />
+            diproses oleh tim dapur kami."
           </p>
         </div>
       </main>
@@ -267,9 +279,7 @@ const KonfirmasiPage = () => {
           className="w-full bg-[#ff5722] text-white font-sans font-bold text-[16px] py-[16px] rounded-[12px] active:scale-[0.98] transition-all disabled:bg-slate-dark/30 disabled:cursor-not-allowed disabled:active:scale-100 shadow-[0_8px_8px_rgba(255,87,34,0.3)] disabled:shadow-none flex items-center justify-center gap-[8px]"
         >
           <span>{isSubmitting ? 'Memproses...' : 'Buat Pesanan Sekarang'}</span>
-          {!isSubmitting && (
-            <ChevronRight size={18} className="stroke-[2.5]" />
-          )}
+          {!isSubmitting && <ChevronRight size={18} className="stroke-[2.5]" />}
         </button>
       </div>
     </div>

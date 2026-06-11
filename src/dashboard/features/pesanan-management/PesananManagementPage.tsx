@@ -1,11 +1,13 @@
-import { Input } from '@shared/components/ui';
+import { Button, Input } from '@shared/components/ui';
 import { Search } from 'lucide-react';
 import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import KanbanBoard from './components/KanbanBoard';
 import { usePesananAdminStore } from './store/pesananAdminStore';
 
 const PesananManagementPage: FC = () => {
-  const { searchQuery, filterDate, setSearchQuery, setFilterDate } = usePesananAdminStore();
+  const navigate = useNavigate();
+  const { searchQuery, setSearchQuery } = usePesananAdminStore();
 
   return (
     <div className="flex h-[calc(100vh-64px)] w-full flex-col bg-off-white p-6">
@@ -18,6 +20,7 @@ const PesananManagementPage: FC = () => {
 
         {/* Filters */}
         <div className="flex items-center gap-4">
+          {/* Search bar untuk filter kanban */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-dark/40" />
             <Input
@@ -29,32 +32,16 @@ const PesananManagementPage: FC = () => {
             />
           </div>
 
-          {/* Simple Tab-style Filter */}
-          <div className="flex rounded-lg border border-slate-dark/20 bg-white p-1">
-            <button
-              type="button"
-              onClick={() => setFilterDate('SEMUA')}
-              className={`rounded-md px-4 py-1.5 text-[13px] font-semibold transition-colors ${
-                filterDate === 'SEMUA'
-                  ? 'bg-teal-muted text-white'
-                  : 'text-slate-dark hover:bg-slate-50'
-              }`}
-            >
-              Semua
-            </button>
-            <button
-              type="button"
-              onClick={() => setFilterDate('HARI_INI')}
-              className={`rounded-md px-4 py-1.5 text-[13px] font-semibold transition-colors ${
-                filterDate === 'HARI_INI'
-                  ? 'bg-teal-muted text-white'
-                  : 'text-slate-dark hover:bg-slate-50'
-              }`}
-            >
-              Hari Ini
-            </button>
-          </div>
+          {/* Navigation to Riwayat Pesanan */}
+          <Button
+            variant="primary"
+            className="h-10 px-6 font-semibold"
+            onClick={() => navigate('/dashboard/pesanan/riwayat')}
+          >
+            RIWAYAT PESANAN
+          </Button>
         </div>
+
       </div>
 
       {/* Kanban Board Area */}

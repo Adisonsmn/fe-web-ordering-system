@@ -1,8 +1,9 @@
 import { Button, Input, Modal } from '@shared/components/ui';
 import type { CreateMenuRequest, MenuDetailResponse, MenuResponse } from '@shared/types';
 import { cn } from '@shared/utils/cn';
-import { ChevronDown, Plus, X } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import { ChevronDown, Plus, Upload, X } from 'lucide-react';
+import { type ChangeEvent, type FC, useEffect, useState } from 'react';
+import { uploadImage } from '../api/upload.api';
 import { useCreateMenu, useUpdateMenu } from '../hooks/useMenuAdmin';
 import { usePromoList } from '../hooks/usePromoList';
 
@@ -13,7 +14,7 @@ interface MenuFormModalProps {
   onDelete?: (menu: MenuResponse) => void;
 }
 
-const CATEGORIES = ['Makanan', 'Minuman', 'Dessert', 'Paket Hemat'];
+const CATEGORIES = ['Makanan', 'Minuman', 'Dessert'];
 
 const EMPTY_FORM: CreateMenuRequest = {
   menuName: '',
@@ -43,10 +44,16 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
   const [spiceInput, setSpiceInput] = useState('');
   const [activeTab, setActiveTab] = useState<'dasar' | 'detail' | 'promo'>('dasar');
 
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
   const { mutate: createMenu, isPending: isCreating } = useCreateMenu();
   const { mutate: updateMenu, isPending: isUpdating } = useUpdateMenu();
   const { data: promos } = usePromoList();
-  const isPending = isCreating || isUpdating;
+  const isPending = isCreating || isUpdating || isUploading;
 
   // Populate form when editing
   useEffect(() => {
@@ -73,7 +80,41 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
     setActiveTab('dasar');
     setDonenessInput('');
     setSpiceInput('');
+    setThumbnailFile(null);
+    setHeroFile(null);
+    setThumbnailPreview(null);
+    setHeroPreview(null);
   }, [menu]);
+
+  // Clean up previews
+  useEffect(() => {
+    return () => {
+      if (thumbnailPreview && !thumbnailPreview.startsWith('http')) {
+        URL.revokeObjectURL(thumbnailPreview);
+      }
+      if (heroPreview && !heroPreview.startsWith('http')) {
+        URL.revokeObjectURL(heroPreview);
+      }
+    };
+  }, [thumbnailPreview, heroPreview]);
+
+  const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setThumbnailFile(file);
+      const url = URL.createObjectURL(file);
+      setThumbnailPreview(url);
+    }
+  };
+
+  const handleHeroChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setHeroFile(file);
+      const url = URL.createObjectURL(file);
+      setHeroPreview(url);
+    }
+  };
 
   const handleChange = (field: keyof CreateMenuRequest, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -115,13 +156,31 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsUploading(true);
+    let uploadedThumbnailUrl = form.imageUrl;
+    let uploadedHeroUrl = form.heroImageUrl;
+
+    try {
+      if (thumbnailFile) {
+        uploadedThumbnailUrl = await uploadImage(thumbnailFile);
+      }
+      if (heroFile) {
+        uploadedHeroUrl = await uploadImage(heroFile);
+      }
+    } catch (error) {
+      console.error('Failed to upload images:', error);
+      alert('Gagal mengunggah gambar. Silakan coba lagi.');
+      setIsUploading(false);
+      return;
+    }
+
     const payload: CreateMenuRequest = {
       ...form,
       price: Number(form.price),
       description: form.description || '',
-      imageUrl: form.imageUrl || null,
-      heroImageUrl: form.heroImageUrl || null,
+      imageUrl: uploadedThumbnailUrl || null,
+      heroImageUrl: uploadedHeroUrl || null,
       titleLine1: form.titleLine1 || null,
       titleLine2: form.titleLine2 || null,
       longDescription: form.longDescription || null,
@@ -131,16 +190,23 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
       promoId: form.promoId || null,
     };
 
+    const handleSuccess = () => {
+      setIsUploading(false);
+      onClose();
+    };
+
     if (isEditing && menu) {
       updateMenu(
         { menuId: menu.menuId, request: payload },
         {
-          onSuccess: () => onClose(),
+          onSuccess: handleSuccess,
+          onError: () => setIsUploading(false),
         },
       );
     } else {
       createMenu(payload, {
-        onSuccess: () => onClose(),
+        onSuccess: handleSuccess,
+        onError: () => setIsUploading(false),
       });
     }
   };
@@ -258,29 +324,56 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
               />
             </div>
 
-            {/* URL Gambar Thumbnail */}
+            {/* Gambar Thumbnail */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="menu-image-url" className="text-[13px] font-semibold text-slate-dark">
-                URL Gambar Thumbnail
-              </label>
-              <Input
-                id="menu-image-url"
-                placeholder="https://example.com/gambar.jpg"
-                value={form.imageUrl ?? ''}
-                onChange={(e) => handleChange('imageUrl', e.target.value || null)}
-              />
-              {form.imageUrl && (
-                <div className="mt-2 rounded-xl overflow-hidden w-24 h-24 border border-slate-dark/10 bg-slate-50">
-                  <img
-                    src={form.imageUrl}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+              <label className="text-[13px] font-semibold text-slate-dark">Gambar Thumbnail</label>
+              <div className="flex items-start gap-4">
+                {(thumbnailPreview || form.imageUrl) && (
+                  <div className="rounded-xl overflow-hidden w-24 h-24 shrink-0 border border-slate-dark/10 bg-slate-50 relative group">
+                    <img
+                      src={thumbnailPreview || form.imageUrl || ''}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setThumbnailFile(null);
+                          setThumbnailPreview(null);
+                          handleChange('imageUrl', null);
+                        }}
+                        className="text-white bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <label
+                    htmlFor="menu-thumbnail-file"
+                    className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-dark/20 rounded-xl cursor-pointer hover:border-teal-muted hover:bg-teal-muted/5 transition-colors"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-6 h-6 text-slate-dark/40 mb-2" />
+                      <p className="text-xs text-slate-dark/60">
+                        <span className="font-semibold text-teal-muted">Klik untuk unggah</span>
+                      </p>
+                    </div>
+                    <input
+                      id="menu-thumbnail-file"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleThumbnailChange}
+                    />
+                  </label>
                 </div>
-              )}
+              </div>
             </div>
           </>
         )}
@@ -319,18 +412,56 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="menu-hero-image-url"
-                className="text-[13px] font-semibold text-slate-dark"
-              >
-                URL Gambar Hero (Detail Page)
+              <label className="text-[13px] font-semibold text-slate-dark">
+                Gambar Hero (Detail Page)
               </label>
-              <Input
-                id="menu-hero-image-url"
-                placeholder="https://example.com/hero.jpg"
-                value={form.heroImageUrl ?? ''}
-                onChange={(e) => handleChange('heroImageUrl', e.target.value || null)}
-              />
+              <div className="flex items-start gap-4">
+                {(heroPreview || form.heroImageUrl) && (
+                  <div className="rounded-xl overflow-hidden w-full max-w-[200px] aspect-video shrink-0 border border-slate-dark/10 bg-slate-50 relative group">
+                    <img
+                      src={heroPreview || form.heroImageUrl || ''}
+                      alt="Hero Preview"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setHeroFile(null);
+                          setHeroPreview(null);
+                          handleChange('heroImageUrl', null);
+                        }}
+                        className="text-white bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                <div className="flex-1">
+                  <label
+                    htmlFor="menu-hero-file"
+                    className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-slate-dark/20 rounded-xl cursor-pointer hover:border-teal-muted hover:bg-teal-muted/5 transition-colors"
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <Upload className="w-6 h-6 text-slate-dark/40 mb-2" />
+                      <p className="text-xs text-slate-dark/60 text-center px-4">
+                        <span className="font-semibold text-teal-muted">Klik untuk unggah</span>
+                      </p>
+                    </div>
+                    <input
+                      id="menu-hero-file"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleHeroChange}
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -567,7 +698,13 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
             onClick={handleSubmit}
             disabled={isPending || !form.menuName || !form.price || !form.category}
           >
-            {isPending ? 'Menyimpan...' : isEditing ? 'Simpan Perubahan' : 'Tambah Menu'}
+            {isUploading
+              ? 'Mengunggah...'
+              : isPending
+                ? 'Menyimpan...'
+                : isEditing
+                  ? 'Simpan Perubahan'
+                  : 'Tambah Menu'}
           </Button>
         </div>
       </div>

@@ -1,7 +1,8 @@
 import type { PesananResponse } from '@shared/types';
 import { cn } from '@shared/utils/cn';
 import { Loader2, MoreVertical } from 'lucide-react';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
+import EstimasiModal from '../../pesanan-management/components/EstimasiModal';
 import { useUpdatePesananStatus } from '../hooks/usePesananAction';
 
 interface LiveOrderScrollProps {
@@ -43,9 +44,10 @@ const getStatusBadge = (status: string) => {
 
 const getCtaButton = (
   status: string,
-  pesananId: string,
+  order: PesananResponse,
   updateStatus: ReturnType<typeof useUpdatePesananStatus>['mutate'],
   isPending: boolean,
+  onTerima: (pesananId: string, kodePesanan: string) => void,
 ) => {
   switch (status) {
     case 'NEW':
@@ -53,7 +55,7 @@ const getCtaButton = (
         <button
           type="button"
           disabled={isPending}
-          onClick={() => updateStatus({ pesananId, status: 'PREPARING' })}
+          onClick={() => onTerima(order.pesananId, order.kodePesanan)}
           className="flex-1 bg-deep-orange text-white text-[13px] font-semibold py-2 rounded-lg hover:bg-deep-orange/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
@@ -65,7 +67,7 @@ const getCtaButton = (
         <button
           type="button"
           disabled={isPending}
-          onClick={() => updateStatus({ pesananId, status: 'READY' })}
+          onClick={() => updateStatus({ pesananId: order.pesananId, status: 'READY' })}
           className="flex-1 bg-teal-muted text-white text-[13px] font-semibold py-2 rounded-lg hover:bg-teal-muted/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
@@ -77,7 +79,7 @@ const getCtaButton = (
         <button
           type="button"
           disabled={isPending}
-          onClick={() => updateStatus({ pesananId, status: 'SERVED' })}
+          onClick={() => updateStatus({ pesananId: order.pesananId, status: 'SERVED' })}
           className="flex-1 bg-slate-dark text-white text-[13px] font-semibold py-2 rounded-lg hover:bg-slate-dark/90 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
@@ -92,9 +94,27 @@ const getCtaButton = (
 export const LiveOrderScroll = forwardRef<HTMLDivElement, LiveOrderScrollProps>(
   ({ orders = [], isLoading }, ref) => {
     const { mutate: updateStatus, isPending } = useUpdatePesananStatus();
+    const [selectedPesanan, setSelectedPesanan] = useState<{ id: string; kode: string } | null>(
+      null,
+    );
 
     // Only show active orders in the live scroll
     const activeOrders = orders.filter((o) => ['NEW', 'PREPARING', 'READY'].includes(o.status));
+
+    const handleTerimaClick = (pesananId: string, kodePesanan: string) => {
+      setSelectedPesanan({ id: pesananId, kode: kodePesanan });
+    };
+
+    const handleEstimasiSubmit = (estimasiMenit: number) => {
+      if (selectedPesanan) {
+        updateStatus({
+          pesananId: selectedPesanan.id,
+          status: 'PREPARING',
+          estimasiMenit,
+        });
+        setSelectedPesanan(null);
+      }
+    };
 
     if (isLoading) {
       return (
@@ -129,72 +149,82 @@ export const LiveOrderScroll = forwardRef<HTMLDivElement, LiveOrderScrollProps>(
     }
 
     return (
-      <div ref={ref} className="flex gap-4 overflow-x-auto pb-4 snap-x no-scrollbar">
-        {activeOrders.map((order) => {
-          // Different border color based on status
-          const borderColor =
-            order.status === 'NEW'
-              ? 'border-l-deep-orange'
-              : order.status === 'PREPARING'
-                ? 'border-l-teal-muted'
-                : 'border-l-slate-dark';
+      <>
+        <div ref={ref} className="flex gap-4 overflow-x-auto pb-4 snap-x no-scrollbar">
+          {activeOrders.map((order) => {
+            // Different border color based on status
+            const borderColor =
+              order.status === 'NEW'
+                ? 'border-l-deep-orange'
+                : order.status === 'PREPARING'
+                  ? 'border-l-teal-muted'
+                  : 'border-l-slate-dark';
 
-          return (
-            <div
-              key={order.pesananId}
-              className={cn(
-                'min-w-[300px] w-[300px] bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-5 border-y border-r border-slate-dark/5 border-l-4 snap-start shrink-0 flex flex-col',
-                borderColor,
-              )}
-            >
-              <div className="flex items-center gap-3 mb-3">
-                {getStatusBadge(order.status)}
-                <span className="text-[11px] text-slate-dark/50 font-medium">
-                  {getRelativeTime(order.tanggalPesanan)}
-                </span>
-              </div>
-
-              <h4 className="text-[15px] font-semibold text-slate-dark mb-4">
-                {order.nomorMeja ? `Meja ${String(order.nomorMeja).padStart(2, '0')}` : 'Takeaway'}
-                {order.kodePesanan && (
-                  <span className="text-slate-dark/50 ml-2 font-normal text-[13px]">
-                    #{order.kodePesanan.split('-')[1] || order.kodePesanan}
+            return (
+              <div
+                key={order.pesananId}
+                className={cn(
+                  'min-w-[300px] w-[300px] bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-5 border-y border-r border-slate-dark/5 border-l-4 snap-start shrink-0 flex flex-col',
+                  borderColor,
+                )}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  {getStatusBadge(order.status)}
+                  <span className="text-[11px] text-slate-dark/50 font-medium">
+                    {getRelativeTime(order.tanggalPesanan)}
                   </span>
-                )}
-              </h4>
+                </div>
 
-              {/* Order Items Summary */}
-              <div className="flex-1 space-y-1.5 mb-6">
-                {order.detailPesanan.slice(0, 3).map((detail, idx) => (
-                  <div
-                    key={`skel-live-${idx}`}
-                    className="text-[13px] text-slate-dark/80 flex gap-2"
+                <h4 className="text-[15px] font-semibold text-slate-dark mb-4">
+                  {order.nomorMeja
+                    ? `Meja ${String(order.nomorMeja).padStart(2, '0')}`
+                    : 'Takeaway'}
+                  {order.kodePesanan && (
+                    <span className="text-slate-dark/50 ml-2 font-normal text-[13px]">
+                      #{order.kodePesanan.split('-')[1] || order.kodePesanan}
+                    </span>
+                  )}
+                </h4>
+
+                {/* Order Items Summary */}
+                <div className="flex-1 space-y-1.5 mb-6">
+                  {order.detailPesanan.slice(0, 3).map((detail, idx) => (
+                    <div
+                      key={`skel-live-${idx}`}
+                      className="text-[13px] text-slate-dark/80 flex gap-2"
+                    >
+                      <span className="font-semibold min-w-[20px]">{detail.quantity}x</span>
+                      <span className="line-clamp-1">{detail.menuName}</span>
+                    </div>
+                  ))}
+                  {order.detailPesanan.length > 3 && (
+                    <div className="text-[12px] text-slate-dark/50 italic mt-1">
+                      +{order.detailPesanan.length - 3} item lainnya...
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2 items-center mt-auto">
+                  {getCtaButton(order.status, order, updateStatus, isPending, handleTerimaClick)}
+                  <button
+                    type="button"
+                    disabled
+                    className="p-2 border border-slate-dark/10 rounded-lg text-slate-dark/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="font-semibold min-w-[20px]">{detail.quantity}x</span>
-                    <span className="line-clamp-1">{detail.menuName}</span>
-                  </div>
-                ))}
-                {order.detailPesanan.length > 3 && (
-                  <div className="text-[12px] text-slate-dark/50 italic mt-1">
-                    +{order.detailPesanan.length - 3} item lainnya...
-                  </div>
-                )}
+                    <MoreVertical size={16} />
+                  </button>
+                </div>
               </div>
-
-              <div className="flex gap-2 items-center mt-auto">
-                {getCtaButton(order.status, order.pesananId, updateStatus, isPending)}
-                <button
-                  type="button"
-                  disabled
-                  className="p-2 border border-slate-dark/10 rounded-lg text-slate-dark/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <MoreVertical size={16} />
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+        <EstimasiModal
+          isOpen={selectedPesanan !== null}
+          onClose={() => setSelectedPesanan(null)}
+          onSubmit={handleEstimasiSubmit}
+          kodePesanan={selectedPesanan?.kode || ''}
+        />
+      </>
     );
   },
 );

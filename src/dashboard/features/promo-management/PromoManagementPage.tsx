@@ -1,8 +1,9 @@
 import { Button } from '@shared/components/ui/Button';
 import { ConfirmDialog } from '@shared/components/ui/ConfirmDialog';
 import type { CreatePromoRequest, PromoResponse } from '@shared/types';
-import { Activity, Plus, TrendingUp, Wallet } from 'lucide-react';
+import { Activity, History, Plus, Wallet } from 'lucide-react';
 import { type FC, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PromoFormModal, PromoKpiCard, PromoTable } from './components';
 import {
   useCreatePromo,
@@ -12,6 +13,7 @@ import {
 } from './hooks/usePromoManagement';
 
 export const PromoManagementPage: FC = () => {
+  const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState<string>('semua');
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [selectedPromo, setSelectedPromo] = useState<PromoResponse | null>(null);
@@ -88,20 +90,30 @@ export const PromoManagementPage: FC = () => {
             Pantau dan kelola semua promosi, diskon, dan kampanye aktif.
           </p>
         </div>
-        <Button
-          onClick={() => {
-            setSelectedPromo(null);
-            setIsFormModalOpen(true);
-          }}
-          className="gap-2 bg-deep-orange hover:bg-deep-orange/90 shadow-lg shadow-deep-orange/20"
-        >
-          <Plus size={18} />
-          Buat Promosi Baru
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/dashboard/promo/riwayat')}
+            className="gap-2 border-[#e4beb4] text-[#5b4039] hover:bg-[#5b4039]/5 font-semibold h-[48px] px-6 rounded-xl"
+          >
+            <History size={18} />
+            Riwayat Promosi
+          </Button>
+          <Button
+            onClick={() => {
+              setSelectedPromo(null);
+              setIsFormModalOpen(true);
+            }}
+            className="gap-2 bg-deep-orange hover:bg-deep-orange/90 font-semibold h-[48px] px-6 rounded-xl shadow-lg shadow-deep-orange/20"
+          >
+            <Plus size={18} />
+            Buat Promosi Baru
+          </Button>
+        </div>
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PromoKpiCard
           label="Kampanye Berjalan"
           value={kpiData.activeCount}
@@ -115,13 +127,6 @@ export const PromoManagementPage: FC = () => {
           subValue="Kali digunakan"
           icon={<Wallet size={24} />}
           isPositive={true}
-        />
-        <PromoKpiCard
-          label="Konversi"
-          value="N/A"
-          subValue="Masih dalam pengembangan"
-          icon={<TrendingUp size={24} />}
-          isPositive={false}
         />
       </div>
 

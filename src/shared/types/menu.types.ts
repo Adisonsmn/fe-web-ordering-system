@@ -45,8 +45,6 @@ export interface MenuDetailResponse {
   updatedBy: string | null;
 }
 
-
-
 export interface CreateMenuRequest {
   menuName: string;
   price: number;

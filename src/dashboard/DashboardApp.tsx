@@ -9,9 +9,8 @@ import {
   Loader2,
   LogOut,
   ReceiptText,
-  Search,
   Settings,
-  Tag,
+  Ticket,
 } from 'lucide-react';
 import { type FC, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -21,27 +20,14 @@ import {
   useUpdateRestoConfig,
 } from './features/pengaturan/hooks/useRestoConfigAdmin';
 
-const SIDEBAR_GROUPS = [
-  {
-    title: 'OPERASIONAL',
-    items: [
-      { label: 'Dasbor Utama', path: '/dashboard', icon: LayoutDashboard },
-      { label: 'Manajemen Pesanan', path: '/dashboard/pesanan', icon: ReceiptText },
-      { label: 'Manajemen Menu', path: '/dashboard/menu', icon: BookOpen },
-      { label: 'Promosi & Diskon', path: '/dashboard/promo', icon: Tag },
-    ],
-  },
-  {
-    title: 'LAPORAN',
-    items: [{ label: 'Analitik & Laporan', path: '/dashboard/analitik', icon: BarChart3 }],
-  },
-  {
-    title: 'SISTEM',
-    items: [
-      { label: 'Manajemen Meja', path: '/dashboard/meja', icon: LayoutGrid },
-      { label: 'Pengaturan', path: '/dashboard/pengaturan', icon: Settings },
-    ],
-  },
+const NAV_ITEMS = [
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  { label: 'Pesanan', path: '/dashboard/pesanan', icon: ReceiptText },
+  { label: 'Laporan', path: '/dashboard/laporan', icon: BarChart3 },
+  { label: 'Menu', path: '/dashboard/menu', icon: BookOpen },
+  { label: 'Promosi', path: '/dashboard/promo', icon: Ticket },
+  { label: 'Meja', path: '/dashboard/meja', icon: LayoutGrid },
+  { label: 'Pengaturan', path: '/dashboard/pengaturan', icon: Settings },
 ];
 
 const DashboardApp: FC = () => {
@@ -62,17 +48,14 @@ const DashboardApp: FC = () => {
   };
 
   const getPageTitle = (pathname: string) => {
-    for (const group of SIDEBAR_GROUPS) {
-      const found = group.items.find((i) => i.path === pathname);
-      if (found) return found.label;
-    }
-    return 'Dasbor Utama';
+    const found = NAV_ITEMS.find((i) => i.path === pathname);
+    return found ? found.label : 'Dasbor Utama';
   };
 
   return (
     <div className="h-screen w-full bg-off-white flex text-slate-dark font-sans overflow-hidden">
       {/* Sidebar Panel */}
-      <aside className="w-[240px] h-full bg-slate-dark text-white flex flex-col shrink-0 shadow-lg relative z-20">
+      <aside className="w-[240px] h-full bg-[#141c25] text-white flex flex-col shrink-0 shadow-lg relative z-20">
         <div className="p-6 mb-4 flex flex-col gap-1 border-b border-white/5 pb-8">
           <h1 className="text-[24px] font-serif font-bold tracking-wide leading-tight">
             Aroma Senja
@@ -82,41 +65,32 @@ const DashboardApp: FC = () => {
           </span>
         </div>
 
-        <nav className="flex-1 px-4 space-y-6 overflow-y-auto mt-2">
-          {SIDEBAR_GROUPS.map((group) => (
-            <div key={group.title} className="flex flex-col gap-2">
-              <span className="text-[10px] font-bold tracking-widest text-white/40 uppercase pl-4">
-                {group.title}
-              </span>
-              <div className="flex flex-col space-y-1">
-                {group.items.map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    end={item.path === '/dashboard'}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex items-center gap-3 px-4 py-2.5 rounded-xl text-[14px] font-medium transition-colors duration-200',
-                        isActive
-                          ? 'bg-teal-muted text-white font-semibold shadow-md border-l-4 border-l-white pl-3'
-                          : 'text-white/60 hover:bg-white/5 hover:text-white',
-                      )
-                    }
-                  >
-                    <item.icon size={18} />
-                    {item.label}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
+        <nav className="flex-1 space-y-1 overflow-y-auto mt-6">
+          {NAV_ITEMS.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/dashboard'}
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-3 py-3 text-[12px] font-bold tracking-[0.6px] transition-colors duration-200',
+                  isActive
+                    ? 'border-l-4 border-l-deep-orange text-white font-bold pl-[28px]'
+                    : 'text-[rgba(226,226,226,0.7)] hover:text-white px-6',
+                )
+              }
+            >
+              <item.icon size={18} />
+              {item.label}
+            </NavLink>
           ))}
         </nav>
 
         <div className="p-6 flex flex-col gap-4 border-t border-white/5 mt-auto">
-          {/* Restoran Buka/Tutup Radio */}
+          {/* Restoran Buka/Tutup Button */}
           <div className="flex flex-col gap-3 p-4 bg-white/5 rounded-xl border border-white/10 relative">
             {(isLoadingConfig || isUpdatingConfig) && (
-              <div className="absolute inset-0 bg-slate-dark/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl">
+              <div className="absolute inset-0 bg-[#141c25]/50 backdrop-blur-sm z-10 flex items-center justify-center rounded-xl">
                 <Loader2 className="animate-spin text-white w-5 h-5" />
               </div>
             )}
@@ -124,55 +98,27 @@ const DashboardApp: FC = () => {
               Status Operasional
             </span>
 
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center justify-center w-5 h-5">
-                <input
-                  type="radio"
-                  name="restoStatus"
-                  checked={isRestoOpen}
-                  onChange={() => {
-                    if (!isRestoOpen) setShowConfirmOpenModal(true);
-                  }}
-                  className="peer appearance-none w-5 h-5 border-2 border-white/30 rounded-full checked:border-teal-muted transition-colors cursor-pointer"
-                />
-                <div className="absolute w-2.5 h-2.5 bg-teal-muted rounded-full opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
-              </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (isRestoOpen) {
+                  setShowConfirmCloseModal(true);
+                } else {
+                  setShowConfirmOpenModal(true);
+                }
+              }}
+              className={cn(
+                'w-full h-10 rounded-lg flex items-center justify-center gap-2 text-[14px] font-semibold transition-all duration-200',
+                isRestoOpen
+                  ? 'bg-deep-orange text-white'
+                  : 'bg-white/5 border border-deep-orange/30 text-white/60 hover:text-white',
+              )}
+            >
               <span
-                className={cn(
-                  'text-[14px] transition-colors',
-                  isRestoOpen
-                    ? 'text-white font-medium'
-                    : 'text-white/60 group-hover:text-white/80',
-                )}
-              >
-                Buka
-              </span>
-            </label>
-
-            <label className="flex items-center gap-3 cursor-pointer group">
-              <div className="relative flex items-center justify-center w-5 h-5">
-                <input
-                  type="radio"
-                  name="restoStatus"
-                  checked={!isRestoOpen}
-                  onChange={() => {
-                    if (isRestoOpen) setShowConfirmCloseModal(true);
-                  }}
-                  className="peer appearance-none w-5 h-5 border-2 border-white/30 rounded-full checked:border-deep-orange transition-colors cursor-pointer"
-                />
-                <div className="absolute w-2.5 h-2.5 bg-deep-orange rounded-full opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></div>
-              </div>
-              <span
-                className={cn(
-                  'text-[14px] transition-colors',
-                  !isRestoOpen
-                    ? 'text-deep-orange font-medium'
-                    : 'text-white/60 group-hover:text-white/80',
-                )}
-              >
-                Tutup
-              </span>
-            </label>
+                className={cn('w-2 h-2 rounded-full', isRestoOpen ? 'bg-white' : 'bg-deep-orange')}
+              />
+              {isRestoOpen ? 'Restoran Buka' : 'Restoran Tutup'}
+            </button>
           </div>
 
           <button
@@ -196,19 +142,6 @@ const DashboardApp: FC = () => {
           </div>
 
           <div className="flex items-center gap-6">
-            {/* Search Bar */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={16} className="text-slate-dark/40" />
-              </div>
-              <input
-                type="text"
-                disabled
-                className="w-[280px] h-[36px] bg-slate-dark/5 border border-transparent focus:bg-white focus:border-teal-muted focus:ring-1 focus:ring-teal-muted rounded-lg pl-9 pr-4 text-[13px] text-slate-dark placeholder:text-slate-dark/40 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Cari pesanan atau meja... (Segera)"
-              />
-            </div>
-
             <button
               type="button"
               disabled
@@ -227,7 +160,10 @@ const DashboardApp: FC = () => {
               </div>
               <div className="w-9 h-9 rounded-full bg-slate-dark/10 overflow-hidden border border-slate-dark/5">
                 <img
-                  src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.name || 'Admin'}`}
+                  src={
+                    user?.avatarUrl ||
+                    `https://api.dicebear.com/7.x/notionists/svg?seed=${user?.name || 'Admin'}`
+                  }
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />

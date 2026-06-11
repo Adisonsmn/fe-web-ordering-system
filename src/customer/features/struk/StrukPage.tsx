@@ -46,10 +46,15 @@ const StrukPage: FC = () => {
           aria-label="Kembali"
         >
           <ChevronLeft size={16} className="text-[#f9f9f9]" />
-          <span className="font-serif font-semibold text-[20px] text-[#f9f9f9] leading-[28px] whitespace-nowrap">Aroma Senja</span>
+          <span className="font-serif font-semibold text-[20px] text-[#f9f9f9] leading-[28px] whitespace-nowrap">
+            Aroma Senja
+          </span>
         </button>
         {/* Kanan: Share icon */}
-        <button aria-label="Bagikan" className="w-[18px] h-[20px] flex items-center justify-center text-[#f9f9f9] active:opacity-70">
+        <button
+          aria-label="Bagikan"
+          className="w-[18px] h-[20px] flex items-center justify-center text-[#f9f9f9] active:opacity-70"
+        >
           <Share2 size={18} />
         </button>
       </div>
@@ -81,4 +86,3 @@ const StrukPage: FC = () => {
 };
 
 export default StrukPage;
-

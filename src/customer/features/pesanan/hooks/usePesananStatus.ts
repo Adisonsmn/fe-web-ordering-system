@@ -40,7 +40,7 @@ export const usePesananStatus = (pesananId: string) => {
 
             return {
               ...old,
-              status: payload.status,
+              status: payload.status.toUpperCase() as StatusPesanan,
               estimasiMenit: payload.estimasiMenit,
             };
           },

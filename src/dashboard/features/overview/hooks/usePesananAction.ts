@@ -15,13 +15,16 @@ export const useUpdatePesananStatus = () => {
       status: string;
       estimasiMenit?: number;
     }) =>
-      apiClient.patch<unknown, { success: boolean; data: PesananResponse }>(
+      apiClient.patch<unknown, PesananResponse>(
         `/pesanan/${pesananId}/status`,
         { status, estimasiMenit },
       ),
     onSuccess: () => {
+      // Hanya invalidate stats dashboard — JANGAN invalidate mejaKeys
+      // Status meja dikelola via WebSocket /topic/admin/meja-status
+      // bukan dari event update status pesanan
       queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
-      queryClient.invalidateQueries({ queryKey: dashboardKeys.meja() });
     },
   });
 };
+

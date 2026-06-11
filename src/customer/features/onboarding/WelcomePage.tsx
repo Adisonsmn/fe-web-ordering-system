@@ -4,6 +4,7 @@ import { type FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRestoConfig } from '../splash/hooks/useRestoConfig';
 import { useScanMeja } from './hooks/useScanMeja';
+import { useMejaStore } from './store/mejaStore';
 
 // Helper to validate UUID structure
 const isUuid = (val: string | null): boolean => {
@@ -23,10 +24,28 @@ const WelcomePage: FC = () => {
   const rawTableParam = localStorage.getItem('nomorMeja');
   const hasValidUuid = isUuid(rawTableParam);
 
-  // Fetch scan/meja detail from database if UUID is available
-  const { data: scanData, isLoading: isScanLoading } = useScanMeja(
-    hasValidUuid ? (rawTableParam as string) : '',
-  );
+  // Gunakan mutation agar POST selalu dipanggil setiap kali halaman dibuka
+  const setScanData = useMejaStore((s) => s.setScanData);
+  const {
+    mutate: scanMeja,
+    data: scanData,
+    isPending: isScanLoading,
+    isError,
+    error,
+  } = useScanMeja();
+
+  // Panggil scan saat komponen mount — memastikan backend mencatat device & update isOccupied
+  useEffect(() => {
+    if (hasValidUuid && rawTableParam) {
+      scanMeja(rawTableParam, {
+        onSuccess: (data) => {
+          // Simpan ke store agar halaman lain bisa baca tanpa POST ulang
+          setScanData(data);
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // hanya saat mount
 
   // Derive Table Number and Zone (dynamic database values with Figma fallback)
   const nomorMeja = scanData?.nomorMeja ?? (hasValidUuid ? '...' : rawTableParam || '7');
@@ -38,6 +57,15 @@ const WelcomePage: FC = () => {
       console.warn('Meja sedang dinonaktifkan.');
     }
   }, [scanData]);
+
+  useEffect(() => {
+    if (isError) {
+      const axiosError = error as any;
+      if (axiosError?.response?.status === 409) {
+        navigate('/customer/blocked', { replace: true });
+      }
+    }
+  }, [isError, error, navigate]);
 
   return (
     <div className="relative w-full min-h-screen bg-off-white select-none animate-fade-in flex flex-col font-sans">
@@ -111,7 +139,8 @@ const WelcomePage: FC = () => {
           <button
             type="button"
             onClick={() => navigate('/customer/auth-choice')}
-            className="w-full bg-deep-orange text-white font-sans font-bold text-[14px] py-[16px] rounded-[12px] active:scale-[0.98] transition-all duration-200 tracking-[1.4px] uppercase text-center cursor-pointer shadow-lg shadow-deep-orange/25 hover:bg-deep-orange/95 flex items-center justify-center gap-2"
+            disabled={isScanLoading || isError}
+            className="w-full bg-deep-orange text-white font-sans font-bold text-[14px] py-[16px] rounded-[12px] active:scale-[0.98] transition-all duration-200 tracking-[1.4px] uppercase text-center cursor-pointer shadow-lg shadow-deep-orange/25 hover:bg-deep-orange/95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Mulai Pesan
             <ArrowRight className="w-4 h-4 stroke-[2.5]" />

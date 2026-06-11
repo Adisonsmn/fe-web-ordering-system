@@ -1,3 +1,4 @@
+import { mejaKeys } from '@dashboard/features/meja-management/hooks/useMejaManagement';
 import { useWebSocket } from '@shared/hooks/useWebSocket';
 import type { MejaResponse, MejaStatusWsPayload, PesananBaruWsPayload } from '@shared/types';
 import { formatJam } from '@shared/utils/date';
@@ -17,7 +18,6 @@ export const dashboardKeys = {
   stats: () => [...dashboardKeys.all, 'stats'] as const,
   trend: (params?: object) => [...dashboardKeys.all, 'trend', params] as const,
   topMenu: (params?: object) => [...dashboardKeys.all, 'topMenu', params] as const,
-  meja: () => [...dashboardKeys.all, 'meja'] as const,
 };
 
 export const useDashboardStats = () => {
@@ -35,9 +35,9 @@ export const useDashboardStats = () => {
     const unsubPesananBaru = subscribe(
       '/topic/admin/pesanan-baru',
       (payload: PesananBaruWsPayload) => {
-        // Refetch stats to get updated live orders & KPIs
+        // Refetch stats untuk update live orders & KPIs
+        // Meja status dihandle oleh WS /topic/admin/meja-status secara optimistik
         queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
-        queryClient.invalidateQueries({ queryKey: dashboardKeys.meja() });
 
         // Add to activity feed
         addActivity({
@@ -102,7 +102,7 @@ export const useMejaList = () => {
   const addActivity = useActivityStore((state) => state.addActivity);
 
   const query = useQuery({
-    queryKey: dashboardKeys.meja(),
+    queryKey: mejaKeys.list(),
     queryFn: getAllMeja,
   });
 
@@ -111,12 +111,17 @@ export const useMejaList = () => {
       '/topic/admin/meja-status',
       (payload: MejaStatusWsPayload) => {
         // Optimitic update cache
-        queryClient.setQueryData<MejaResponse[]>(dashboardKeys.meja(), (old) => {
+        queryClient.setQueryData<MejaResponse[]>(mejaKeys.list(), (old) => {
           if (!old) return old;
           return old.map((m) =>
-            m.mejaId === payload.mejaId ? { ...m, isOccupied: payload.isOccupied } : m,
+            m.mejaId === payload.mejaId
+              ? { ...m, isOccupied: payload.isOccupied, mejaStatus: payload.status }
+              : m,
           );
         });
+
+        // Invalidate dashboard stats agar KPI "Okupansi Meja" tetap sinkron
+        queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
 
         // Add to activity feed
         addActivity({

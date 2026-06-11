@@ -92,7 +92,7 @@ export const useGuestLogin = () => {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
 
-  return useMutation<LoginResponse, ApiError, { tableId: string }>({
+  return useMutation<LoginResponse, ApiError, { tableId: string; deviceToken: string }>({
     mutationFn: loginAsGuest,
     onSuccess: (data) => {
       const { accessToken } = data;

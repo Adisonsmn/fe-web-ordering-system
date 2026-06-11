@@ -249,12 +249,8 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
                     </>
                   ) : (
                     <>
-                      <span>
-                        {isAddingToCart ? 'Menambahkan...' : 'Tambah ke Keranjang'}
-                      </span>
-                      {!isAddingToCart && (
-                        <span>— {formatRupiah(totalPrice)}</span>
-                      )}
+                      <span>{isAddingToCart ? 'Menambahkan...' : 'Tambah ke Keranjang'}</span>
+                      {!isAddingToCart && <span>— {formatRupiah(totalPrice)}</span>}
                     </>
                   )}
                 </div>

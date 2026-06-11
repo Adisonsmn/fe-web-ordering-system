@@ -7,15 +7,15 @@ import { useActivityStore } from '../store/activityStore';
 const getActivityIcon = (type: ActivityType) => {
   switch (type) {
     case 'PAYMENT':
-      return <CreditCard size={16} className="text-teal-muted" />;
+      return <CreditCard size={14} className="text-teal-muted" />;
     case 'ORDER':
-      return <Bell size={16} className="text-deep-orange" />;
+      return <Bell size={14} className="text-deep-orange" />;
     case 'RATING':
-      return <Star size={16} className="text-[#FFC107]" />;
+      return <Star size={14} className="text-[#FFC107]" />;
     case 'SYSTEM':
-      return <User size={16} className="text-slate-dark/50" />;
+      return <User size={14} className="text-slate-dark/50" />;
     default:
-      return <Clock size={16} className="text-slate-dark/50" />;
+      return <Clock size={14} className="text-slate-dark/50" />;
   }
 };
 
@@ -56,7 +56,7 @@ export const ActivityFeed: FC = () => {
               {/* Icon Circle */}
               <div
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center shrink-0',
+                  'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
                   getActivityBg(item.type),
                 )}
               >
@@ -65,13 +65,13 @@ export const ActivityFeed: FC = () => {
 
               {/* Content */}
               <div className="flex-1 pb-1">
-                <h4 className="text-[14px] font-semibold text-slate-dark leading-tight mb-1">
+                <h4 className="text-[12px] font-bold text-slate-dark leading-tight mb-1">
                   {item.title}
                 </h4>
-                <p className="text-[13px] text-slate-dark/70 mb-1 leading-snug">
+                <p className="text-[12px] font-normal text-[#1a1c1c] mb-1 leading-snug">
                   {item.description}
                 </p>
-                <span className="text-[11px] text-slate-dark/40 font-medium">{item.timestamp}</span>
+                <span className="text-[10px] text-[#5b4039] font-medium">{item.timestamp}</span>
               </div>
             </div>
           ))

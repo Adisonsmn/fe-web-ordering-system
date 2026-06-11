@@ -1,22 +1,22 @@
 import { ChevronLeft, Edit3, ShoppingBag } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMejaStore } from '../onboarding/store/mejaStore';
 import { useKalkulasiPoin, usePoinBalance } from '../poin/hooks/usePoin';
 import KeranjangItem from './components/KeranjangItem';
 import PoinToggle from './components/PoinToggle';
 import RingkasanBiaya from './components/RingkasanBiaya';
 import { useKeranjang } from './hooks/useKeranjang';
 import { useKeranjangStore } from './store/keranjangStore';
-import { useScanMeja } from '../onboarding/hooks/useScanMeja';
 
 const KeranjangPage = () => {
   const navigate = useNavigate();
   const { data: keranjang, isLoading } = useKeranjang();
   const { catatanPesanan, setCatatanPesanan, gunakanPoin } = useKeranjangStore();
 
-  // Ambil data meja dari localStorage + API
+  // Ambil data meja dari store (sudah di-set oleh WelcomePage)
+  const scanData = useMejaStore((s) => s.scanData);
   const rawMejaId = localStorage.getItem('nomorMeja') ?? '';
-  const { data: scanData } = useScanMeja(rawMejaId);
   const nomorMejaDisplay = scanData?.nomorMeja ?? (rawMejaId ? '...' : '-');
 
   // Data diskon dari API jika toggle poin menyala
@@ -62,7 +62,9 @@ const KeranjangPage = () => {
           aria-label="Kembali"
         >
           <ChevronLeft size={16} className="text-[#5b4039]" />
-          <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">Kembali</span>
+          <span className="font-sans font-normal text-[16px] text-[#5b4039] leading-[24px]">
+            Kembali
+          </span>
         </button>
         {/* Tengah: Judul */}
         <h1 className="absolute left-1/2 -translate-x-1/2 font-sans font-bold text-[20px] text-[#1a1c1c] leading-[28px] whitespace-nowrap">

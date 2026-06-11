@@ -5,6 +5,7 @@ export interface ScanMejaResponse {
   isActive: boolean;
   isOccupied: boolean;
   isOpen: boolean;
+  sessionToken?: string;
 }
 
 export interface MejaResponse {
@@ -14,6 +15,7 @@ export interface MejaResponse {
   isActive: boolean;
   isOccupied: boolean;
   qrCodeUrl: string;
+  mejaStatus?: 'AVAILABLE' | 'OCCUPIED';
 }
 
 export interface CreateMejaRequest {
@@ -25,4 +27,5 @@ export interface MejaStatusWsPayload {
   mejaId: string;
   nomorMeja: number;
   isOccupied: boolean;
+  status?: 'AVAILABLE' | 'OCCUPIED';
 }

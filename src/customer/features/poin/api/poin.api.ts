@@ -1,9 +1,9 @@
 import { apiClient } from '@shared/lib/axios';
 import type {
   PoinBalanceResponse,
+  PoinEstimasiResponse,
   PoinKalkulasiRequest,
   PoinKalkulasiResponse,
-  PoinEstimasiResponse,
 } from '@shared/types';
 
 export const getPoinBalance = async (): Promise<PoinBalanceResponse> => {

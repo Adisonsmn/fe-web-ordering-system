@@ -36,3 +36,22 @@ export const selesaikanPesanan = async (pesananId: string): Promise<PesananRespo
   });
   return data;
 };
+
+export interface RiwayatPesananParams {
+  startDate?: string; // ISO date-time
+  endDate?: string; // ISO date-time
+  category?: string;
+  page?: number;
+  size?: number;
+}
+
+export const getRiwayatPesananAdmin = async (
+  params?: RiwayatPesananParams,
+): Promise<import('@shared/types/api.types').PageResponse<PesananResponse>> => {
+  const data = await apiClient.get<
+    unknown,
+    import('@shared/types/api.types').PageResponse<PesananResponse>
+  >('/pesanan', { params });
+  return data;
+};
+

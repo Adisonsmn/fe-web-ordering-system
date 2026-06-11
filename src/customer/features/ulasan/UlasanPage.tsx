@@ -1,7 +1,7 @@
 import { apiClient } from '@shared/lib/axios';
 import type { PesananResponse } from '@shared/types/pesanan.types';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, Search, Globe } from 'lucide-react';
+import { ChevronLeft, Globe, Search } from 'lucide-react';
 import type { FC } from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -111,9 +111,14 @@ const UlasanPage: FC = () => {
           <ChevronLeft size={16} />
         </button>
         {/* Tengah: Brand */}
-        <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">Aroma Senja</h1>
+        <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">
+          Aroma Senja
+        </h1>
         {/* Kanan: Search icon */}
-        <button aria-label="Cari" className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00] active:opacity-70">
+        <button
+          aria-label="Cari"
+          className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00] active:opacity-70"
+        >
           <Search size={18} />
         </button>
       </div>
@@ -209,7 +214,9 @@ const UlasanPage: FC = () => {
         {/* Error Message */}
         {submitMutation.isError && (
           <div className="text-red-500 text-[14px] font-sans bg-red-50 p-3 rounded-xl border border-red-100 animate-fade-in -mt-2">
-            {submitMutation.error?.response?.data?.message || submitMutation.error?.message || 'Gagal mengirim ulasan.'}
+            {submitMutation.error?.response?.data?.message ||
+              submitMutation.error?.message ||
+              'Gagal mengirim ulasan.'}
           </div>
         )}
 

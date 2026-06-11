@@ -1,11 +1,11 @@
 import { useRestoStore } from '@shared/stores/restoStore';
+import { X } from 'lucide-react';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authDecor from '@/assets/auth_decor.png';
 import heroCoffee from '@/assets/hero_coffee.svg';
 import heroStar from '@/assets/hero_star.svg';
 import { useGuestLogin } from '../auth/hooks/useAuth';
-import { X } from 'lucide-react';
 
 const AuthChoicePage: FC = () => {
   const navigate = useNavigate();
@@ -32,12 +32,17 @@ const AuthChoicePage: FC = () => {
         {/* Right: Lewati Button */}
         <button
           type="button"
-          onClick={() => guestLogin({ tableId: mejaIdFromQr })}
+          onClick={() => {
+            const deviceToken = localStorage.getItem('deviceToken') || crypto.randomUUID();
+            guestLogin({ tableId: mejaIdFromQr, deviceToken });
+          }}
           disabled={isGuestLoggingIn}
           className="flex items-center gap-[8px] cursor-pointer active:scale-95 transition-transform py-2 disabled:opacity-50"
         >
           <X size={16} className="text-[#3f4851]" />
-          <span className="text-[16px] font-sans font-normal text-[#3f4851]">{isGuestLoggingIn ? 'Memproses...' : 'Lewati'}</span>
+          <span className="text-[16px] font-sans font-normal text-[#3f4851]">
+            {isGuestLoggingIn ? 'Memproses...' : 'Lewati'}
+          </span>
         </button>
       </div>
 
@@ -130,7 +135,10 @@ const AuthChoicePage: FC = () => {
           {/* Button 3: Lanjut sebagai Tamu */}
           <button
             type="button"
-            onClick={() => guestLogin({ tableId: mejaIdFromQr })}
+            onClick={() => {
+              const deviceToken = localStorage.getItem('deviceToken') || crypto.randomUUID();
+              guestLogin({ tableId: mejaIdFromQr, deviceToken });
+            }}
             disabled={isGuestLoggingIn}
             className="w-full text-teal-muted font-sans font-bold text-[16px] py-[12px] active:scale-[0.98] transition-all duration-200 text-center cursor-pointer hover:opacity-80 disabled:opacity-50"
           >

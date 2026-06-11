@@ -8,8 +8,8 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 interface RevenueChartProps {
   data?: PendapatanTrendResponse[];
   isLoading?: boolean;
-  period: 'bulanan' | 'tahunan';
-  onPeriodChange: (period: 'bulanan' | 'tahunan') => void;
+  view: 'weekly' | 'monthly';
+  onViewChange: (view: 'weekly' | 'monthly') => void;
 }
 
 const CustomTooltip = ({
@@ -35,31 +35,27 @@ const CustomTooltip = ({
   return null;
 };
 
-// Format X-axis label based on period
-const formatXAxisLabel = (label: string, period: 'bulanan' | 'tahunan') => {
-  if (period === 'tahunan') {
-    // "Jan 2026" -> "Jan" or keep it as is. We'll keep it as is.
+// Format X-axis label based on period (weekly/monthly)
+const formatXAxisLabel = (label: string, view: 'weekly' | 'monthly') => {
+  try {
+    const date = new Date(label);
+    if (Number.isNaN(date.getTime())) return label;
+    if (view === 'weekly') {
+      const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+      return days[date.getDay()];
+    } else {
+      return date.getDate().toString();
+    }
+  } catch {
     return label;
   }
-
-  if (period === 'bulanan') {
-    // "2026-05-29" -> "29"
-    try {
-      const date = new Date(label);
-      if (Number.isNaN(date.getTime())) return label;
-      return date.getDate().toString();
-    } catch {
-      return label;
-    }
-  }
-  return label;
 };
 
 export const RevenueChart: FC<RevenueChartProps> = ({
   data = [],
   isLoading,
-  period,
-  onPeriodChange,
+  view,
+  onViewChange,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -77,14 +73,14 @@ export const RevenueChart: FC<RevenueChartProps> = ({
   // Format data for Recharts
   const chartData = data.map((item) => ({
     ...item,
-    shortLabel: formatXAxisLabel(item.label, period),
+    shortLabel: formatXAxisLabel(item.label, view),
   }));
 
   return (
     <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 border border-slate-dark/5 flex flex-col h-[380px]">
       <div className="flex justify-between items-center mb-6 relative">
         <h3 className="text-[16px] font-serif font-semibold text-slate-dark">
-          {period === 'bulanan' ? 'Tren Pendapatan Bulanan' : 'Tren Pendapatan Tahunan'}
+          {view === 'weekly' ? 'Tren Pendapatan Mingguan' : 'Tren Pendapatan Bulanan'}
         </h3>
         <div ref={dropdownRef} className="relative">
           <button
@@ -92,7 +88,7 @@ export const RevenueChart: FC<RevenueChartProps> = ({
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-dark/10 text-[13px] text-slate-dark/70 hover:bg-off-white transition-colors"
           >
-            {period === 'bulanan' ? 'Bulan Ini' : 'Tahun Ini'}
+            {view === 'weekly' ? '7 Hari Terakhir' : 'Bulan Ini'}
             <ChevronDown
               size={14}
               className={cn('transition-transform duration-200', isDropdownOpen && 'rotate-180')}
@@ -100,36 +96,36 @@ export const RevenueChart: FC<RevenueChartProps> = ({
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute right-0 top-full mt-1 w-32 bg-white rounded-lg shadow-lg border border-slate-dark/5 py-1 z-20">
+            <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-lg shadow-lg border border-slate-dark/5 py-1 z-20">
               <button
                 type="button"
                 onClick={() => {
-                  onPeriodChange('bulanan');
+                  onViewChange('weekly');
                   setIsDropdownOpen(false);
                 }}
                 className={cn(
                   'w-full text-left px-4 py-2 text-[13px] hover:bg-slate-dark/5 transition-colors',
-                  period === 'bulanan'
+                  view === 'weekly'
+                    ? 'text-teal-muted font-semibold bg-teal-muted/5'
+                    : 'text-slate-dark',
+                )}
+              >
+                7 Hari Terakhir
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  onViewChange('monthly');
+                  setIsDropdownOpen(false);
+                }}
+                className={cn(
+                  'w-full text-left px-4 py-2 text-[13px] hover:bg-slate-dark/5 transition-colors',
+                  view === 'monthly'
                     ? 'text-teal-muted font-semibold bg-teal-muted/5'
                     : 'text-slate-dark',
                 )}
               >
                 Bulan Ini
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  onPeriodChange('tahunan');
-                  setIsDropdownOpen(false);
-                }}
-                className={cn(
-                  'w-full text-left px-4 py-2 text-[13px] hover:bg-slate-dark/5 transition-colors',
-                  period === 'tahunan'
-                    ? 'text-teal-muted font-semibold bg-teal-muted/5'
-                    : 'text-slate-dark',
-                )}
-              >
-                Tahun Ini
               </button>
             </div>
           )}

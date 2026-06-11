@@ -28,3 +28,13 @@ export interface CreatePromoRequest {
   tag?: string;
   description?: string;
 }
+
+export interface PromoHistoryResponse {
+  pesananId: string;
+  kodePesanan: string;
+  clientName: string;
+  nomorMeja: number | null;
+  tanggalPesanan: string;
+  totalHarga: number;
+  totalPotongan: number;
+}

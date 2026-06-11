@@ -1,5 +1,5 @@
 import { cn } from '@shared/utils/cn';
-import type { FC } from 'react';
+import type { ChangeEvent, FC } from 'react';
 
 interface AvailabilityToggleProps {
   menuId: string;
@@ -14,32 +14,25 @@ export const AvailabilityToggle: FC<AvailabilityToggleProps> = ({
   onToggle,
   isLoading = false,
 }) => {
-  const handleChange = () => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     if (!isLoading) {
-      onToggle(menuId, !isAvailable);
+      onToggle(menuId, e.target.value === 'true');
     }
   };
 
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={isAvailable}
-      onClick={handleChange}
+    <select
+      value={isAvailable ? 'true' : 'false'}
+      onChange={handleChange}
+      onClick={(e) => e.stopPropagation()}
       disabled={isLoading}
       className={cn(
-        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-teal-muted focus:ring-offset-1',
-        isAvailable ? 'bg-teal-muted' : 'bg-slate-dark/20',
+        'bg-white border border-slate-dark/20 rounded-md px-3 py-1.5 text-[13px] text-slate-dark outline-none cursor-pointer focus:border-teal-muted focus:ring-1 focus:ring-teal-muted transition-colors',
         isLoading && 'opacity-60 cursor-not-allowed',
       )}
     >
-      <span className="sr-only">{isAvailable ? 'Tersedia' : 'Habis'}</span>
-      <span
-        className={cn(
-          'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-md transform transition-transform duration-200 ease-in-out',
-          isAvailable ? 'translate-x-6' : 'translate-x-1',
-        )}
-      />
-    </button>
+      <option value="true">Tersedia</option>
+      <option value="false">Tidak Tersedia</option>
+    </select>
   );
 };

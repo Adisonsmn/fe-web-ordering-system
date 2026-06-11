@@ -46,7 +46,6 @@ export const MenuCard: FC<MenuCardProps> = ({
       tabIndex={0}
       className={cn(
         'bg-white border border-deep-orange/20 border-solid flex flex-col items-start justify-self-stretch overflow-clip pb-[6px] pt-px px-px relative rounded-[12px] shadow-[0px_2px_8px_0px_rgba(0,0,0,0.07)] shrink-0 transition-transform duration-200 cursor-pointer hover:shadow-[0_4px_12px_rgba(0,0,0,0.1)] hover:-translate-y-1',
-        isHabis && 'opacity-75',
       )}
     >
       {/* Jika Habis, tambahkan efek overlay putih transparan sesuai Figma (Card Item 3) */}
@@ -87,7 +86,7 @@ export const MenuCard: FC<MenuCardProps> = ({
           (hasPromo ? (
             <div className="absolute bg-deep-orange flex flex-col items-start left-[12px] px-[12px] py-[4px] rounded-[9999px] top-[12px] z-10">
               <p className="text-[12px] font-['DM_Sans'] text-white tracking-[0.6px] leading-[16px] m-0">
-                Promo Aktif
+                {menu.category}
               </p>
             </div>
           ) : (
@@ -152,7 +151,7 @@ export const MenuCard: FC<MenuCardProps> = ({
             </div>
           </div>
 
-          <div className="relative shrink-0">
+          <div className="relative shrink-0 z-30">
             <AvailabilityToggle
               menuId={menu.menuId}
               isAvailable={menu.isAvailable}

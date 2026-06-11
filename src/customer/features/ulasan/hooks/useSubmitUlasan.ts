@@ -1,5 +1,5 @@
-import type { CreateRatingRequest, RatingResponse } from '@shared/types/rating.types';
 import type { ApiError } from '@customer/features/auth/hooks/useAuth';
+import type { CreateRatingRequest, RatingResponse } from '@shared/types/rating.types';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { submitRating } from '../api/rating.api';

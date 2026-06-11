@@ -1,7 +1,7 @@
+import { useAuthStore } from '@shared/stores/authStore';
 import { Sparkles, Star } from 'lucide-react';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@shared/stores/authStore';
 
 const UlasanSuksesPage: FC = () => {
   const navigate = useNavigate();
@@ -36,9 +36,7 @@ const UlasanSuksesPage: FC = () => {
         <div className="bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)] rounded-[12px] p-[16px] w-full max-w-[320px] flex flex-col items-center gap-[8px] mb-6">
           <div className="flex gap-[4px] text-[#ffdba0] text-xl">
             {[1, 2, 3, 4, 5].map((i) => (
-              <span key={i}>
-                ★
-              </span>
+              <span key={i}>★</span>
             ))}
           </div>
           <h2 className="font-serif font-semibold text-[20px] text-[#1a1c1c] text-center">

@@ -1,9 +1,11 @@
+import BottomNav from '@shared/components/layout/BottomNav';
 import { useDebounce } from '@shared/hooks/useDebounce';
 import { ShoppingCart } from 'lucide-react';
 import { type FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useKeranjang, useTambahItem } from '../keranjang/hooks/useKeranjang';
 import MenuDetailSheet from '../menu-detail/MenuDetailSheet';
+import { useMejaStore } from '../onboarding/store/mejaStore';
 import CartMiniBar from './components/CartMiniBar';
 import HeroBanner from './components/HeroBanner';
 import KategoriTab from './components/KategoriTab';
@@ -12,8 +14,6 @@ import PromoCarousel from './components/PromoCarousel';
 import SearchBar from './components/SearchBar';
 import { useMenuList } from './hooks/useMenuList';
 import { usePromoList } from './hooks/usePromo';
-import { useScanMeja } from '../onboarding/hooks/useScanMeja';
-import BottomNav from '@shared/components/layout/BottomNav';
 
 const KatalogPage: FC = () => {
   const navigate = useNavigate();
@@ -21,9 +21,9 @@ const KatalogPage: FC = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null);
 
-  // Ambil data meja dari localStorage + API
+  // Ambil data meja dari store (sudah di-set oleh WelcomePage)
+  const scanData = useMejaStore((s) => s.scanData);
   const rawMejaId = localStorage.getItem('nomorMeja') ?? '';
-  const { data: scanData } = useScanMeja(rawMejaId);
   const nomorMejaDisplay = scanData?.nomorMeja ?? (rawMejaId ? '...' : '7');
 
   const debouncedSearch = useDebounce(searchValue, 300);
@@ -53,7 +53,7 @@ const KatalogPage: FC = () => {
 
   const groupedMenus = useMemo(() => {
     if (!menuList) return [];
-    
+
     const groups: Record<string, typeof menuList> = {};
     for (const menu of menuList) {
       const cat = menu.category || 'Lainnya';
@@ -62,22 +62,22 @@ const KatalogPage: FC = () => {
       }
       groups[cat].push(menu);
     }
-    
+
     const categoryOrder = ['Makanan', 'Minuman', 'Camilan', 'Dessert'];
     const orderedCategories: { name: string; items: typeof menuList }[] = [];
-    
+
     for (const cat of categoryOrder) {
       if (groups[cat] && groups[cat].length > 0) {
         orderedCategories.push({ name: cat, items: groups[cat] });
       }
     }
-    
+
     for (const cat of Object.keys(groups)) {
       if (!categoryOrder.includes(cat) && groups[cat].length > 0) {
         orderedCategories.push({ name: cat, items: groups[cat] });
       }
     }
-    
+
     return orderedCategories;
   }, [menuList]);
 
@@ -94,11 +94,13 @@ const KatalogPage: FC = () => {
         <h1 className="font-serif font-semibold text-[20px] text-white">Aroma Senja</h1>
 
         <div className="flex items-center gap-4">
-            {/* Table Badge — sesuai Figma: ikon fork + nomor meja */}
+          {/* Table Badge — sesuai Figma: ikon fork + nomor meja */}
           <div className="border border-[#76abae] rounded-full px-3 py-1 flex items-center justify-center gap-1.5 bg-black/20">
-              <span className="text-[#76abae] text-[11px]">🍴</span>
-              <span className="font-sans font-bold text-[12px] text-[#76abae]">Meja {nomorMejaDisplay}</span>
-            </div>
+            <span className="text-[#76abae] text-[11px]">🍴</span>
+            <span className="font-sans font-bold text-[12px] text-[#76abae]">
+              Meja {nomorMejaDisplay}
+            </span>
+          </div>
 
           {/* Cart Icon */}
           <button
@@ -144,7 +146,9 @@ const KatalogPage: FC = () => {
               {/* Menu Populer Section */}
               {popularMenus.length > 0 && (
                 <div>
-                  <h2 className="text-[18px] font-serif font-bold text-[#303841] mb-4">Menu Populer</h2>
+                  <h2 className="text-[18px] font-serif font-bold text-[#303841] mb-4">
+                    Menu Populer
+                  </h2>
                   <div className="flex flex-col gap-[16px]">
                     {popularMenus.map((menu) => (
                       <MenuCard
@@ -161,8 +165,13 @@ const KatalogPage: FC = () => {
 
               {/* Grouped Categories Section */}
               {groupedMenus.map(({ name, items }) => (
-                <div key={name} className="border-t border-[rgba(228,190,180,0.3)] pt-[17px] mt-[16px]">
-                  <h3 className="font-serif font-semibold text-[20px] text-[#303841] mb-[16px]">{name}</h3>
+                <div
+                  key={name}
+                  className="border-t border-[rgba(228,190,180,0.3)] pt-[17px] mt-[16px]"
+                >
+                  <h3 className="font-serif font-semibold text-[20px] text-[#303841] mb-[16px]">
+                    {name}
+                  </h3>
                   <div className="flex flex-col gap-[16px]">
                     {items.map((menu) => (
                       <MenuCard

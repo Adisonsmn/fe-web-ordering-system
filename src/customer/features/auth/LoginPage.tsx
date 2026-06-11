@@ -1,6 +1,6 @@
-import { type FC } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 
 // Placeholder for Google Icon SVG

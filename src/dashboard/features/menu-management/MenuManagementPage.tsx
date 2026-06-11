@@ -9,7 +9,7 @@ import { MenuGrid, MenuGridSkeleton } from './components/MenuGrid';
 import { MenuStatsBar } from './components/MenuStatsBar';
 import { useDeleteMenu, useMenuAdminList, useToggleMenuAvailability } from './hooks/useMenuAdmin';
 
-const CATEGORIES = ['Semua', 'Makanan', 'Minuman', 'Dessert', 'Paket Hemat'];
+const CATEGORIES = ['Semua', 'Makanan', 'Minuman', 'Dessert'];
 
 const MenuManagementPage = () => {
   const [activeCategory, setActiveCategory] = useState('Semua');

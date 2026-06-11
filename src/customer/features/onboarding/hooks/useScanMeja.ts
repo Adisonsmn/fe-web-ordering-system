@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { scanMeja } from '../api/onboarding.api';
 
 export const onboardingKeys = {
@@ -6,11 +6,14 @@ export const onboardingKeys = {
   scan: (mejaId: string) => [...onboardingKeys.all, 'scan', mejaId] as const,
 };
 
-export const useScanMeja = (mejaId: string) => {
-  return useQuery({
-    queryKey: onboardingKeys.scan(mejaId),
-    queryFn: () => scanMeja(mejaId),
-    enabled: !!mejaId,
-    staleTime: 1000 * 60 * 5, // 5 menit
+/**
+ * useScanMeja menggunakan useMutation agar POST ke backend selalu dipanggil
+ * setiap kali WelcomePage di-render — tidak di-cache.
+ * Ini krusial agar isOccupied meja ter-update dan WebSocket dashboard ter-trigger.
+ */
+export const useScanMeja = () => {
+  return useMutation({
+    mutationFn: (mejaId: string) => scanMeja(mejaId),
+    retry: false,
   });
 };

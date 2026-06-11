@@ -1,5 +1,4 @@
 import type { MenuTerlarisResponse } from '@shared/types';
-import { cn } from '@shared/utils/cn';
 import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,10 +33,8 @@ export const TopMenuList: FC<TopMenuListProps> = ({ data = [], isLoading }) => {
             Belum ada data menu terlaris
           </div>
         ) : (
-          data.map((item, index) => {
+          data.map((item) => {
             const percentage = Math.max(5, Math.round((item.totalTerjual / maxSold) * 100));
-            // Top 1 gets teal color, others get darker slate
-            const isTop = index === 0;
 
             return (
               <div key={item.menuId} className="flex flex-col gap-2">
@@ -53,10 +50,7 @@ export const TopMenuList: FC<TopMenuListProps> = ({ data = [], isLoading }) => {
                 <div className="h-1.5 w-full bg-slate-dark/5 rounded-full overflow-hidden">
                   {/* Progress bar */}
                   <div
-                    className={cn(
-                      'h-full rounded-full transition-all duration-500',
-                      isTop ? 'bg-teal-muted' : 'bg-slate-dark/80',
-                    )}
+                    className="h-full rounded-full transition-all duration-500 bg-[#316669]"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
@@ -70,7 +64,7 @@ export const TopMenuList: FC<TopMenuListProps> = ({ data = [], isLoading }) => {
         <button
           type="button"
           onClick={() => navigate('/dashboard/laporan')}
-          className="w-full py-2.5 rounded-lg border border-slate-dark/10 text-[13px] font-semibold text-slate-dark hover:bg-slate-dark/5 transition-colors"
+          className="w-full py-2.5 rounded-lg border border-[rgba(255,87,34,0.2)] text-[13px] font-semibold text-deep-orange hover:bg-deep-orange/5 transition-colors"
         >
           Lihat Semua Laporan
         </button>
