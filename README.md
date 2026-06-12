@@ -422,7 +422,7 @@ Pastikan semua variabel di `.env.example` sudah diisi di:
 | agungsrgh | [@agungsrgh](https://github.com/agungsrgh) | Frontend Dev |
 | Farhan Hamzah | [@farhan-hamzah](https://github.com/farhan-hamzah) | Frontend Dev |
 | Nazal Putra | [@NazalDev](https://github.com/NazalDev) | Frontend Dev |
-
+| Muhammad Huttaqi | [@MrTakeIt](https://github.com/MrTakeIt) | Frontend Dev |
 ---
 
 ## 📝 Lisensi
