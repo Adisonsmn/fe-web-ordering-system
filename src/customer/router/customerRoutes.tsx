@@ -15,6 +15,7 @@ import StrukPage from '../features/struk/StrukPage';
 import UlasanPage from '../features/ulasan/UlasanPage';
 import UlasanSuksesPage from '../features/ulasan/UlasanSuksesPage';
 import LoyaltiPage from '../features/loyalti/LoyaltiPage';
+import AccountPage from '../features/account/AccountPage';
 
 export const customerRoutes: RouteObject[] = [
   {
@@ -80,6 +81,10 @@ export const customerRoutes: RouteObject[] = [
       {
         path: 'loyalty',
         element: <LoyaltiPage />,
+      },
+      {
+        path: 'account',
+        element: <AccountPage />,
       },
     ],
   },
