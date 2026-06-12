@@ -82,7 +82,7 @@ const OverviewPage: FC = () => {
             decorIcon={<ReceiptText size={80} />}
           />
           <KpiCard
-            label="Okupansi Meja"
+            label="Meja Terisi"
             value={isLoadingStats ? '...' : `${statsData?.totalMejaAktif || 0} / ${mejaTotal} Meja`}
             showProgressBar
             progressValue={progressPct}

@@ -1,8 +1,11 @@
-import { stompClient } from '@shared/lib/websocket';
+import { registerTopicSubscription, stompClient } from '@shared/lib/websocket';
 import type { IMessage } from '@stomp/stompjs';
 import { useCallback, useEffect } from 'react';
 
 export const useWebSocket = () => {
+  // Aktifkan koneksi STOMP saat pertama kali hook ini digunakan.
+  // Singleton stompClient memastikan hanya ada satu koneksi meskipun
+  // hook ini dipanggil dari banyak komponen.
   useEffect(() => {
     if (!stompClient.active) {
       stompClient.activate();
@@ -11,6 +14,10 @@ export const useWebSocket = () => {
 
   const subscribe = useCallback(
     <T>(topic: string, callback: (payload: T) => void): (() => void) => {
+      // ID unik per subscription untuk registry management
+      const id = crypto.randomUUID();
+
+      // Wrap callback ke STOMP message handler
       const messageHandler = (message: IMessage) => {
         try {
           const payload = JSON.parse(message.body) as T;
@@ -20,33 +27,9 @@ export const useWebSocket = () => {
         }
       };
 
-      let subscription: { unsubscribe: () => void } | null = null;
-      let interval: ReturnType<typeof setInterval> | null = null;
-
-      if (stompClient.connected) {
-        subscription = stompClient.subscribe(topic, messageHandler);
-      } else {
-        // Polling berkala (setiap 100ms) untuk memeriksa koneksi
-        // dan mendaftarkan subskripsi setelah tersambung.
-        interval = setInterval(() => {
-          if (stompClient.connected) {
-            subscription = stompClient.subscribe(topic, messageHandler);
-            if (interval) {
-              clearInterval(interval);
-              interval = null;
-            }
-          }
-        }, 100);
-      }
-
-      return () => {
-        if (interval) {
-          clearInterval(interval);
-        }
-        if (subscription) {
-          subscription.unsubscribe();
-        }
-      };
+      // Daftarkan ke registry — subscription akan aktif saat connected
+      // dan otomatis di-recreate saat reconnect
+      return registerTopicSubscription(id, topic, messageHandler);
     },
     [],
   );

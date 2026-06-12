@@ -23,11 +23,17 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
     );
   }
 
+  // Rata-rata diskon dihitung di frontend
+  const rataDiskon =
+    data.totalPesananPakaiPromo > 0
+      ? data.totalDiskonPromo / data.totalPesananPakaiPromo
+      : 0;
+
   return (
     <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 border border-slate-dark/5 flex flex-col min-h-[300px]">
       <h3 className="text-[16px] font-serif font-semibold text-slate-dark mb-6 flex items-center gap-2">
         <Ticket className="text-teal-muted" size={20} />
-        Performa Loyalti & Promosi
+        Performa Loyalti &amp; Promosi
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
@@ -40,16 +46,17 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-center text-[14px]">
               <span className="text-slate-dark/60">Poin Diterbitkan</span>
-              <span className="font-bold text-slate-dark">{data.totalPoinDiterbitkan} pts</span>
+              <span className="font-bold text-slate-dark">
+                {data.totalPoinDiterbitkan.toLocaleString('id-ID')} pts
+              </span>
             </div>
             <div className="flex justify-between items-center text-[14px]">
               <span className="text-slate-dark/60">Poin Digunakan</span>
-              <span className="font-bold text-teal-muted">{data.totalPoinDigunakan} pts</span>
+              <span className="font-bold text-teal-muted">
+                {data.totalPoinDigunakan.toLocaleString('id-ID')} pts
+              </span>
             </div>
-            <div className="flex justify-between items-center text-[14px]">
-              <span className="text-slate-dark/60">Poin Hangus</span>
-              <span className="font-bold text-deep-orange">{data.totalPoinHangus} pts</span>
-            </div>
+
           </div>
         </div>
 
@@ -68,15 +75,14 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
             </div>
             <div className="flex justify-between items-center text-[14px]">
               <span className="text-slate-dark/60">Pesanan Pakai Promo</span>
-              <span className="font-bold text-slate-dark">{data.totalPesananPromo} pesanan</span>
+              <span className="font-bold text-slate-dark">
+                {data.totalPesananPakaiPromo} pesanan
+              </span>
             </div>
-            {/* Simple efficiency indicator */}
             <div className="flex justify-between items-center text-[14px] pt-1 border-t border-slate-dark/10">
               <span className="text-slate-dark/60">Rata-rata Diskon</span>
               <span className="font-bold text-slate-dark">
-                {data.totalPesananPromo > 0
-                  ? formatRupiah(data.totalDiskonPromo / data.totalPesananPromo)
-                  : 'Rp 0'}
+                {formatRupiah(rataDiskon)}
               </span>
             </div>
           </div>

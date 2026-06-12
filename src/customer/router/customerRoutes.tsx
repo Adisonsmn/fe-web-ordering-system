@@ -14,6 +14,7 @@ import SplashScreen from '../features/splash/SplashScreen';
 import StrukPage from '../features/struk/StrukPage';
 import UlasanPage from '../features/ulasan/UlasanPage';
 import UlasanSuksesPage from '../features/ulasan/UlasanSuksesPage';
+import LoyaltiPage from '../features/loyalti/LoyaltiPage';
 
 export const customerRoutes: RouteObject[] = [
   {
@@ -75,6 +76,10 @@ export const customerRoutes: RouteObject[] = [
       {
         path: 'ulasan-sukses',
         element: <UlasanSuksesPage />,
+      },
+      {
+        path: 'loyalty',
+        element: <LoyaltiPage />,
       },
     ],
   },

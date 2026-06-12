@@ -82,7 +82,7 @@ const SplashScreen: FC = () => {
         {/* Heading 1 - Brand Logo */}
         <div className="flex flex-col items-center">
           <h1 className="text-[42px] font-serif font-normal text-off-white tracking-[-1.05px] leading-[52.5px] text-center">
-            Aroma Senja
+            {data?.namaRestoran || 'Aroma Senja'}
           </h1>
         </div>
       </div>
@@ -108,9 +108,7 @@ const SplashScreen: FC = () => {
             {/* Tagline */}
             <div className="max-w-[240px] opacity-90">
               <p className="text-[16px] font-sans italic text-teal-muted text-center leading-[24px]">
-                Nikmati setiap momen tanpa
-                <br />
-                antre
+                {data?.tagline || 'Nikmati setiap momen tanpa antre'}
               </p>
             </div>
           </>

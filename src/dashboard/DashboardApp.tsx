@@ -48,8 +48,11 @@ const DashboardApp: FC = () => {
   };
 
   const getPageTitle = (pathname: string) => {
-    const found = NAV_ITEMS.find((i) => i.path === pathname);
-    return found ? found.label : 'Dasbor Utama';
+    // Cari match persis dulu, lalu fallback ke prefix match untuk sub-route
+    const exact = NAV_ITEMS.find((i) => i.path === pathname);
+    if (exact) return exact.label;
+    const prefix = NAV_ITEMS.find((i) => i.path !== '/dashboard' && pathname.startsWith(i.path));
+    return prefix ? prefix.label : 'Dasbor Utama';
   };
 
   return (

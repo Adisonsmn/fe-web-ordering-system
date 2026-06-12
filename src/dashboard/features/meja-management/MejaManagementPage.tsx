@@ -33,6 +33,7 @@ const MejaManagementPage: FC = () => {
       total: mejaList.length,
       terisi: mejaList.filter((m) => m.isOccupied).length,
       kosong: mejaList.filter((m) => !m.isOccupied).length,
+      indoor: mejaList.filter((m) => m.zone === 'INDOOR').length,
       outdoor: mejaList.filter((m) => m.zone === 'OUTDOOR').length,
     };
   }, [mejaList]);

@@ -61,15 +61,19 @@ export interface ActivityItem {
 }
 
 export interface RatingSentimenResponse {
-  rating: number;
-  jumlah: number;
-  persentase: number;
+  bintang: number;  // matches backend record field name
+  count: number;    // matches backend record field name
 }
 
+
 export interface PoinPromoStatsResponse {
-  totalPoinDiterbitkan: number;
-  totalPoinDigunakan: number;
-  totalPoinHangus: number;
-  totalDiskonPromo: number;
-  totalPesananPromo: number;
+  totalPoinDiterbitkan: number;   // total poin EARN
+  totalPoinDigunakan: number;     // total poin REDEEM
+  totalDiskonPromo: number;       // rupiah diskon dari promo
+  totalPesananPakaiPromo: number; // jumlah pesanan pakai promo
+  topPromo?: {
+    promoId: string;
+    namaPromo: string;
+    totalPenggunaan: number;
+  } | null;
 }

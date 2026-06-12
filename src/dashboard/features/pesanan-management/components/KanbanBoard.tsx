@@ -31,7 +31,8 @@ const KanbanBoard: FC = () => {
     const lowerQuery = searchQuery.toLowerCase();
     const filterFn = (p: PesananResponse) =>
       p.kodePesanan.toLowerCase().includes(lowerQuery) ||
-      (p.nomorMeja && String(p.nomorMeja).includes(lowerQuery));
+      (p.nomorMeja != null && String(p.nomorMeja).includes(lowerQuery)) ||
+      p.detailPesanan.some((d) => d.menuName.toLowerCase().includes(lowerQuery));
 
     return {
       newOrders: kanbanData.newOrders.filter(filterFn),

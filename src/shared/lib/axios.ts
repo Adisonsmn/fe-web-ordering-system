@@ -50,6 +50,7 @@ apiClient.interceptors.response.use(
 
     // Handle 401 unauthorized & trigger refresh flow
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      // Jika sudah ada proses refresh yang berjalan, tambahkan ke antrian
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({
@@ -70,9 +71,16 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       const refreshToken = useAuthStore.getState().refreshToken;
+
+      // Jika tidak ada refresh token (misal guest atau belum login), jangan paksa logout
       if (!refreshToken) {
-        useAuthStore.getState().clearAuth();
         isRefreshing = false;
+        processQueue(error, null);
+        // Hanya clear auth jika memang ada token di store (bukan request anonim)
+        const currentToken = useAuthStore.getState().token;
+        if (currentToken) {
+          useAuthStore.getState().clearAuth();
+        }
         return Promise.reject(error);
       }
 
@@ -88,8 +96,14 @@ apiClient.interceptors.response.use(
         const newRefreshToken = data?.refreshToken;
         const user = data?.user;
 
-        if (newToken && newRefreshToken && user) {
-          useAuthStore.getState().setAuth(newToken, newRefreshToken, user, user.isGuest);
+        if (newToken) {
+          // Refresh berhasil — update store dengan data baru
+          useAuthStore.getState().setAuth(
+            newToken,
+            newRefreshToken ?? refreshToken, // Gunakan refresh token lama jika tidak ada yang baru
+            user ?? useAuthStore.getState().user, // Pertahankan user lama jika tidak ada user baru
+            useAuthStore.getState().isGuest,
+          );
           processQueue(null, newToken);
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -100,6 +114,7 @@ apiClient.interceptors.response.use(
         throw new Error('Refresh token response structure is invalid');
       } catch (refreshError) {
         processQueue(refreshError, null);
+        // Hanya clear auth jika refresh token benar-benar invalid/expired
         useAuthStore.getState().clearAuth();
         return Promise.reject(refreshError);
       } finally {

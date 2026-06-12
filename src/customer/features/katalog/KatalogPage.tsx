@@ -43,7 +43,7 @@ const KatalogPage: FC = () => {
   // Extract unique categories for tabs
   const categories = useMemo(() => {
     // Usually backend should provide categories, but we derive it from menuList if not
-    const baseCategories = ['Semua', 'Makanan', 'Minuman', 'Camilan', 'Dessert'];
+    const baseCategories = ['Semua', 'Makanan', 'Minuman', 'Dessert'];
     return baseCategories;
   }, []);
 
@@ -63,7 +63,7 @@ const KatalogPage: FC = () => {
       groups[cat].push(menu);
     }
 
-    const categoryOrder = ['Makanan', 'Minuman', 'Camilan', 'Dessert'];
+    const categoryOrder = ['Makanan', 'Minuman', 'Dessert'];
     const orderedCategories: { name: string; items: typeof menuList }[] = [];
 
     for (const cat of categoryOrder) {
@@ -128,7 +128,7 @@ const KatalogPage: FC = () => {
         onSelect={setSelectedCategory}
       />
 
-      <div className="absolute top-[360px] left-0 right-0 bottom-0 overflow-y-auto pb-[180px]">
+      <div className="absolute top-[380px] left-0 right-0 bottom-0 overflow-y-auto pb-[180px]">
         <PromoCarousel promos={promos || []} />
 
         <div className="px-[20px] pb-[40px] flex flex-col gap-4">

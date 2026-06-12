@@ -8,7 +8,6 @@ const RegisterForm: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [agreeTerms, setAgreeTerms] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -51,11 +50,6 @@ const RegisterForm: FC = () => {
       return;
     }
 
-    if (!agreeTerms) {
-      setValidationError('Anda harus menyetujui Syarat & Ketentuan');
-      return;
-    }
-
     // Format phone with +62 prefix if provided
     const formattedPhone = phone ? `+62${phone}` : undefined;
 
@@ -65,7 +59,7 @@ const RegisterForm: FC = () => {
   const errorMessage = apiError?.response?.data?.message || apiError?.message || validationError;
 
   return (
-    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-[16px]">
+    <form onSubmit={handleSubmit} autoComplete="off" className="w-full flex flex-col gap-[16px]">
       {/* Nama Lengkap */}
       <div className="w-full flex flex-col gap-[8px]">
         <label
@@ -85,6 +79,7 @@ const RegisterForm: FC = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder="John Doe"
             disabled={isPending}
+            autoComplete="off"
             className="w-full h-full bg-transparent border-none outline-none pl-[38px] pr-[16px] text-[#5b4039] placeholder-[#6b7280] text-[16px] font-sans"
           />
         </div>
@@ -110,6 +105,7 @@ const RegisterForm: FC = () => {
               onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))} // only allow numbers
               placeholder="812 3456 7890"
               disabled={isPending}
+              autoComplete="off"
               className="w-full h-full bg-transparent border-none outline-none px-[16px] text-[#5b4039] placeholder-[#6b7280] text-[16px] font-sans"
             />
           </div>
@@ -130,11 +126,12 @@ const RegisterForm: FC = () => {
           </div>
           <input
             id="email"
-            type="email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="contoh@email.com"
             disabled={isPending}
+            autoComplete="off"
             className="w-full h-full bg-transparent border-none outline-none pl-[38px] pr-[16px] text-[#5b4039] placeholder-[#6b7280] text-[16px] font-sans"
           />
         </div>
@@ -159,6 +156,7 @@ const RegisterForm: FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             disabled={isPending}
+            autoComplete="new-password"
             className="flex-1 h-full bg-transparent border-none outline-none pl-[38px] text-[#5b4039] placeholder-[#6b7280] text-[16px] font-sans"
           />
           <button
@@ -191,6 +189,7 @@ const RegisterForm: FC = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="••••••••"
             disabled={isPending}
+            autoComplete="new-password"
             className="flex-1 h-full bg-transparent border-none outline-none pl-[38px] text-[#5b4039] placeholder-[#6b7280] text-[16px] font-sans"
           />
           <button
@@ -202,28 +201,6 @@ const RegisterForm: FC = () => {
             {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
         </div>
-      </div>
-
-      {/* T&C Checkbox */}
-      <div className="flex items-start gap-[12px] pt-[8px]">
-        <div className="pt-[2px]">
-          <input
-            type="checkbox"
-            id="agreeTerms"
-            checked={agreeTerms}
-            onChange={(e) => setAgreeTerms(e.target.checked)}
-            disabled={isPending}
-            className="w-[20px] h-[20px] bg-white border border-[#e4beb4] rounded-[4px] cursor-pointer text-[#76abae] focus:ring-[#76abae]"
-          />
-        </div>
-        <label
-          htmlFor="agreeTerms"
-          className="text-[16px] font-sans font-normal text-[#5b4039] leading-[24px] cursor-pointer select-none"
-        >
-          Saya setuju dengan{' '}
-          <span className="text-[#76abae] font-bold underline">Syarat & Ketentuan</span> yang
-          berlaku.
-        </label>
       </div>
 
       {/* Error Message */}

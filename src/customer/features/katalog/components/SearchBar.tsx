@@ -8,7 +8,7 @@ interface SearchBarProps {
 
 const SearchBar: FC<SearchBarProps> = ({ value, onChange }) => {
   return (
-    <div className="absolute bg-white border border-[rgba(228,190,180,0.3)] border-solid content-stretch flex items-center left-[20px] px-[17px] py-[13px] right-[20px] rounded-[9999px] top-[220px] z-10 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]">
+    <div className="absolute bg-white border border-[rgba(228,190,180,0.3)] border-solid content-stretch flex items-center left-[20px] px-[17px] py-[13px] right-[20px] rounded-[9999px] top-[256px] z-10 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]">
       <div className="relative shrink-0 flex items-center justify-center mr-2 text-[#5b4039]/60">
         <Search size={18} />
       </div>

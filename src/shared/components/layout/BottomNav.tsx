@@ -1,3 +1,4 @@
+import { useAuthStore } from '@shared/stores/authStore';
 import { cn } from '@shared/utils/cn';
 import { Award, Receipt, User, Utensils } from 'lucide-react';
 import type { FC } from 'react';
@@ -8,12 +9,15 @@ const BottomNav: FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  const isGuest = useAuthStore((s) => s.isGuest);
+
   const activePesananId = localStorage.getItem('activePesananId');
 
   const isMenuRoute = currentPath.includes('/customer/katalog');
   const isOrdersRoute =
     currentPath.includes('/customer/pesanan/tracking') ||
     currentPath.includes('/customer/pesanan-sukses');
+  const isLoyaltyRoute = currentPath.includes('/customer/loyalty');
 
   const handleOrdersClick = () => {
     if (activePesananId) {
@@ -78,23 +82,50 @@ const BottomNav: FC = () => {
           </span>
         </button>
 
-        {/* Tab Loyalty (Disabled) */}
-        <button
-          type="button"
-          disabled
-          className="flex flex-col items-center justify-center flex-1 h-full py-2 opacity-40 cursor-not-allowed"
-        >
-          <div className="px-5 py-1.5 rounded-full flex items-center justify-center text-[#5d656f]">
-            <Award size={20} strokeWidth={2} />
-          </div>
-          <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">Loyalty</span>
-        </button>
+        {/* Tab Loyalty — aktif hanya jika bukan guest */}
+        {isGuest ? (
+          <button
+            type="button"
+            disabled
+            className="flex flex-col items-center justify-center flex-1 h-full py-2 opacity-35 cursor-not-allowed"
+          >
+            <div className="px-5 py-1.5 rounded-full flex items-center justify-center text-[#5d656f]">
+              <Award size={20} strokeWidth={2} />
+            </div>
+            <span className="text-[12px] font-sans mt-1 font-semibold text-[#5d656f]">Loyalty</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => navigate('/customer/loyalty')}
+            className="flex flex-col items-center justify-center flex-1 h-full py-2 group cursor-pointer"
+          >
+            <div
+              className={cn(
+                'px-5 py-1.5 rounded-full flex items-center justify-center transition-all duration-200',
+                isLoyaltyRoute
+                  ? 'bg-deep-orange text-[#541200]'
+                  : 'text-[#5d656f] group-hover:bg-slate-100',
+              )}
+            >
+              <Award size={20} strokeWidth={isLoyaltyRoute ? 2.5 : 2} />
+            </div>
+            <span
+              className={cn(
+                'text-[12px] font-sans mt-1 transition-colors duration-200',
+                isLoyaltyRoute ? 'font-bold text-[#303841]' : 'text-[#5d656f] font-semibold',
+              )}
+            >
+              Loyalty
+            </span>
+          </button>
+        )}
 
         {/* Tab Account (Disabled) */}
         <button
           type="button"
           disabled
-          className="flex flex-col items-center justify-center flex-1 h-full py-2 opacity-40 cursor-not-allowed"
+          className="flex flex-col items-center justify-center flex-1 h-full py-2 opacity-35 cursor-not-allowed"
         >
           <div className="px-5 py-1.5 rounded-full flex items-center justify-center text-[#5d656f]">
             <User size={20} strokeWidth={2} />

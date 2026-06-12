@@ -20,6 +20,18 @@ export const dashboardKeys = {
   topMenu: (params?: object) => [...dashboardKeys.all, 'topMenu', params] as const,
 };
 
+// Payload shape dari backend untuk event dashboard-stats WS
+interface DashboardStatsWsPayload {
+  event?: string;
+  pesananId?: string;
+  kodePesanan?: string;
+  nomorMeja?: number | null;
+  status?: string;
+  estimasiMenit?: number | null;
+  totalHarga?: number;
+  bintang?: number;
+}
+
 export const useDashboardStats = () => {
   const queryClient = useQueryClient();
   const { subscribe } = useWebSocket();
@@ -52,10 +64,63 @@ export const useDashboardStats = () => {
       },
     );
 
-    // Subscribe to generic dashboard stats update
-    const unsubDashboardStats = subscribe('/topic/admin/dashboard-stats', () => {
-      queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
-    });
+    // Subscribe ke event update status pesanan, bayar, cancel, dan rating
+    const unsubDashboardStats = subscribe(
+      '/topic/admin/dashboard-stats',
+      (payload: DashboardStatsWsPayload) => {
+        // Selalu invalidate stats agar KPI update
+        queryClient.invalidateQueries({ queryKey: dashboardKeys.stats() });
+
+        // Buat entri aktivitas sesuai jenis event
+        const now = formatJam(new Date().toISOString());
+        const mejaInfo = payload.nomorMeja ? `Meja ${payload.nomorMeja}` : 'Takeaway';
+
+        if (payload.event === 'PESANAN_STATUS_UPDATED') {
+          const statusLabels: Record<string, string> = {
+            PREPARING: 'sedang diproses dapur',
+            READY: 'siap disajikan',
+            SERVED: 'telah diantarkan',
+            CONFIRMED: 'dikonfirmasi',
+            CANCELLED: 'dibatalkan',
+          };
+          const label = payload.status ? (statusLabels[payload.status] ?? payload.status) : '-';
+          addActivity({
+            id: crypto.randomUUID(),
+            type: payload.status === 'CANCELLED' ? 'SYSTEM' : 'ORDER',
+            title: `Pesanan ${payload.kodePesanan ?? ''} ${label}`,
+            description: `${mejaInfo}${payload.estimasiMenit ? ` · Estimasi ${payload.estimasiMenit} menit` : ''}`,
+            timestamp: now,
+          });
+        } else if (payload.event === 'PESANAN_SERVED') {
+          addActivity({
+            id: crypto.randomUUID(),
+            type: 'PAYMENT',
+            title: `Pesanan ${payload.kodePesanan ?? ''} selesai`,
+            description: `${mejaInfo} — pembayaran telah dicatat`,
+            timestamp: now,
+          });
+        } else if (payload.event === 'PESANAN_CANCELLED') {
+          addActivity({
+            id: crypto.randomUUID(),
+            type: 'SYSTEM',
+            title: `Pesanan ${payload.kodePesanan ?? ''} dibatalkan`,
+            description: mejaInfo,
+            timestamp: now,
+          });
+        } else if (payload.event === 'RATING_SUBMITTED') {
+          const bintang = payload.bintang ?? 0;
+          const stars = '⭐'.repeat(Math.min(bintang, 5));
+          addActivity({
+            id: crypto.randomUUID(),
+            type: 'RATING',
+            title: `Ulasan baru dari ${mejaInfo}`,
+            description: `Rating ${bintang}/5  ${stars}  (Pesanan ${payload.kodePesanan ?? ''})`,
+            timestamp: now,
+          });
+        }
+        // Jika event tidak dikenal, cukup invalidate stats saja (sudah dilakukan di atas)
+      },
+    );
 
     return () => {
       unsubPesananBaru();
@@ -126,9 +191,11 @@ export const useMejaList = () => {
         // Add to activity feed
         addActivity({
           id: crypto.randomUUID(),
-          type: payload.isOccupied ? 'SYSTEM' : 'PAYMENT',
-          title: `Status Meja ${payload.nomorMeja}`,
-          description: payload.isOccupied ? 'Meja mulai digunakan tamu' : 'Meja kosong/selesai',
+          type: payload.isOccupied ? 'ORDER' : 'SYSTEM',
+          title: `Meja ${payload.nomorMeja} ${payload.isOccupied ? 'terisi' : 'kosong'}`,
+          description: payload.isOccupied
+            ? `Meja ${payload.nomorMeja} mulai digunakan tamu`
+            : `Meja ${payload.nomorMeja} telah dikosongkan`,
           timestamp: formatJam(new Date().toISOString()),
         });
       },

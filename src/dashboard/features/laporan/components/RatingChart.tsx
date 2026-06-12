@@ -8,16 +8,13 @@ interface RatingChartProps {
 }
 
 export const RatingChart: FC<RatingChartProps> = ({ data = [], isLoading }) => {
-  // Sort data descending by rating (5 down to 1)
-  const sortedData = [...data].sort((a, b) => b.rating - a.rating);
+  // Hitung total ulasan dari semua bintang
+  const totalReviews = data.reduce((acc, curr) => acc + curr.count, 0);
 
-  // Compute total reviews
-  const totalReviews = data.reduce((acc, curr) => acc + curr.jumlah, 0);
-
-  // Compute average rating
+  // Hitung rata-rata berbobot
   const avgRating =
     totalReviews > 0
-      ? (data.reduce((acc, curr) => acc + curr.rating * curr.jumlah, 0) / totalReviews).toFixed(1)
+      ? (data.reduce((acc, curr) => acc + curr.bintang * curr.count, 0) / totalReviews).toFixed(1)
       : '0.0';
 
   if (isLoading) {
@@ -36,7 +33,7 @@ export const RatingChart: FC<RatingChartProps> = ({ data = [], isLoading }) => {
   return (
     <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 border border-slate-dark/5 flex flex-col min-h-[300px]">
       <h3 className="text-[16px] font-serif font-semibold text-slate-dark mb-6">
-        Distribusi Ulasan & Rating
+        Distribusi Ulasan &amp; Rating
       </h3>
 
       <div className="flex flex-col md:flex-row gap-8 items-center justify-between flex-1">
@@ -61,14 +58,14 @@ export const RatingChart: FC<RatingChartProps> = ({ data = [], isLoading }) => {
           <span className="text-[12px] text-slate-dark/50">{totalReviews} Total Ulasan</span>
         </div>
 
-        {/* Breakdown Progress Bars */}
+        {/* Breakdown Progress Bars — 5 down to 1 */}
         <div className="flex-1 w-full flex flex-col gap-2.5">
           {[5, 4, 3, 2, 1].map((ratingVal) => {
-            const item = sortedData.find((d) => d.rating === ratingVal) || {
-              rating: ratingVal,
-              jumlah: 0,
-              persentase: 0,
-            };
+            // Cari data dari API; jika tidak ada, default count = 0
+            const item = data.find((d) => d.bintang === ratingVal);
+            const count = item?.count ?? 0;
+            // Hitung persentase di sini (bukan dari backend)
+            const persentase = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
 
             return (
               <div key={ratingVal} className="flex items-center gap-3 w-full">
@@ -79,11 +76,11 @@ export const RatingChart: FC<RatingChartProps> = ({ data = [], isLoading }) => {
                 <div className="flex-1 h-2.5 bg-off-white rounded-full overflow-hidden">
                   <div
                     className="h-full bg-deep-orange rounded-full transition-all duration-300"
-                    style={{ width: `${item.persentase}%` }}
+                    style={{ width: `${persentase}%` }}
                   />
                 </div>
                 <span className="text-[12px] text-slate-dark/50 w-8 text-right">
-                  {item.persentase.toFixed(0)}%
+                  {persentase.toFixed(0)}%
                 </span>
               </div>
             );

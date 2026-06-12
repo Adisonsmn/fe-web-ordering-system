@@ -4,9 +4,11 @@ import {
   createMenu,
   deleteMenu,
   getMenuListAdmin,
+  patchMenuPromo,
   toggleMenuAvailability,
   updateMenu,
 } from '../api/menuAdmin.api';
+
 
 export const menuAdminKeys = {
   all: ['menu-admin'] as const,
@@ -80,3 +82,14 @@ export const useDeleteMenu = () => {
     },
   });
 };
+
+export const usePatchMenuPromo = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: patchMenuPromo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: menuAdminKeys.all });
+    },
+  });
+};
+

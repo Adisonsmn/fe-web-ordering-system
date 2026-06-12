@@ -11,6 +11,7 @@ import {
   usePromoList,
   useUpdatePromo,
 } from './hooks/usePromoManagement';
+import { usePatchMenuPromo, useMenuAdminList } from '../menu-management/hooks/useMenuAdmin';
 
 export const PromoManagementPage: FC = () => {
   const navigate = useNavigate();
@@ -20,16 +21,21 @@ export const PromoManagementPage: FC = () => {
   const [promoToDelete, setPromoToDelete] = useState<PromoResponse | null>(null);
 
   const { data: promos = [], isLoading } = usePromoList(statusFilter);
+  const { data: allMenus = [] } = useMenuAdminList();
   const createPromoMutation = useCreatePromo();
   const updatePromoMutation = useUpdatePromo();
   const deletePromoMutation = useDeletePromo();
+  const patchMenuPromoMutation = usePatchMenuPromo();
 
   // Hitung KPI
   const kpiData = useMemo(() => {
     const activePromos = promos.filter((p) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return p.isActive && today >= new Date(p.tanggalMulai) && today <= new Date(p.tanggalSelesai);
+      // Append T00:00:00 agar diparsing sebagai local time, bukan UTC midnight
+      const startDate = new Date(p.tanggalMulai + 'T00:00:00');
+      const endDate = new Date(p.tanggalSelesai + 'T00:00:00');
+      return p.isActive && today >= startDate && today <= endDate;
     }).length;
 
     // Untuk saat ini karena backend belum menghitung total nilai ditukar dan konversi,
@@ -48,12 +54,31 @@ export const PromoManagementPage: FC = () => {
     };
   }, [promos]);
 
-  const handleCreateOrUpdate = (data: CreatePromoRequest) => {
+  const handleCreateOrUpdate = (data: CreatePromoRequest, selectedMenuIds: string[]) => {
+    /**
+     * Tentukan menu mana yang akan di-assign promo:
+     * 1. Jika ada menu spesifik dipilih → gunakan itu
+     * 2. Jika tidak ada menu spesifik tapi ada targetCategory → cari semua menu di kategori itu
+     * 3. Jika keduanya kosong → tidak ada menu yang di-assign (promo tanpa target spesifik)
+     */
+    const resolveMenuIds = (promoId: string) => {
+      let menuIdsToAssign = selectedMenuIds;
+      if (menuIdsToAssign.length === 0 && data.targetCategory) {
+        menuIdsToAssign = allMenus
+          .filter((m) => m.category === data.targetCategory)
+          .map((m) => m.menuId);
+      }
+      menuIdsToAssign.forEach((menuId) => {
+        patchMenuPromoMutation.mutate({ menuId, promoId });
+      });
+    };
+
     if (selectedPromo) {
       updatePromoMutation.mutate(
         { promoId: selectedPromo.promoId, request: data },
         {
-          onSuccess: () => {
+          onSuccess: (updatedPromo) => {
+            resolveMenuIds(updatedPromo.promoId);
             setIsFormModalOpen(false);
             setSelectedPromo(null);
           },
@@ -61,7 +86,8 @@ export const PromoManagementPage: FC = () => {
       );
     } else {
       createPromoMutation.mutate(data, {
-        onSuccess: () => {
+        onSuccess: (newPromo) => {
+          resolveMenuIds(newPromo.promoId);
           setIsFormModalOpen(false);
         },
       });
@@ -84,10 +110,10 @@ export const PromoManagementPage: FC = () => {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-[22px] font-serif font-bold text-slate-dark mb-1">
-            Kelola Penawaran
+            Kelola Promo
           </h1>
           <p className="text-[14px] text-slate-dark/60">
-            Pantau dan kelola semua promosi, diskon, dan kampanye aktif.
+            Pantau dan kelola semua promosi dan diskon aktif.
           </p>
         </div>
         <div className="flex gap-3">
@@ -115,9 +141,9 @@ export const PromoManagementPage: FC = () => {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <PromoKpiCard
-          label="Kampanye Berjalan"
+          label="Promo Berjalan"
           value={kpiData.activeCount}
-          subValue={kpiData.activeCount > 0 ? '+ Aktif saat ini' : 'Tidak ada kampanye aktif'}
+          subValue={kpiData.activeCount > 0 ? '+ Aktif saat ini' : 'Tidak ada promo aktif'}
           icon={<Activity size={24} />}
           isPositive={kpiData.activeCount > 0}
         />
@@ -180,9 +206,9 @@ export const PromoManagementPage: FC = () => {
         isOpen={!!promoToDelete}
         onClose={() => setPromoToDelete(null)}
         onConfirm={handleDelete}
-        title="Hentikan Promosi"
-        message={`Apakah Anda yakin ingin menghentikan promo "${promoToDelete?.namaPromo}"? Promo ini tidak akan bisa digunakan lagi oleh pelanggan.`}
-        confirmText="Ya, Hentikan"
+        title="Hapus Promo"
+        message={`Apakah Anda yakin ingin menghapus promo "${promoToDelete?.namaPromo}" secara permanen? Promo ini akan dihapus dari database dan tidak bisa dikembalikan. Semua menu yang menggunakan promo ini juga akan kehilangan promo tersebut.`}
+        confirmText="Ya, Hapus Permanen"
         isDestructive
         isLoading={deletePromoMutation.isPending}
       />

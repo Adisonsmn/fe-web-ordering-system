@@ -38,6 +38,7 @@ export const selesaikanPesanan = async (pesananId: string): Promise<PesananRespo
 };
 
 export interface RiwayatPesananParams {
+  statuses?: string[]; // Filter multiple status sekaligus
   startDate?: string; // ISO date-time
   endDate?: string; // ISO date-time
   category?: string;
@@ -51,7 +52,12 @@ export const getRiwayatPesananAdmin = async (
   const data = await apiClient.get<
     unknown,
     import('@shared/types/api.types').PageResponse<PesananResponse>
-  >('/pesanan', { params });
+  >('/pesanan', {
+    params: params,
+    paramsSerializer: {
+      // Agar statuses[] dikirim sebagai statuses=SERVED&statuses=CANCELLED
+      indexes: null,
+    },
+  });
   return data;
 };
-

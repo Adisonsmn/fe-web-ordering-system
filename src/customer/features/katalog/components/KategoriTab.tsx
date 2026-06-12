@@ -9,7 +9,7 @@ interface KategoriTabProps {
 
 const KategoriTab: FC<KategoriTabProps> = ({ categories, selected, onSelect }) => {
   return (
-    <div className="absolute h-[42px] left-0 overflow-x-auto right-0 top-[302px] flex items-center px-[20px] gap-2 scrollbar-none">
+    <div className="absolute h-[42px] left-0 overflow-x-auto right-0 top-[318px] flex items-center px-[20px] gap-2 scrollbar-none">
       {categories.map((category) => {
         const isActive = selected === category;
         return (

@@ -96,7 +96,7 @@ const LaporanPage: FC = () => {
             decorIcon={<ShoppingBag size={80} />}
           />
           <KpiReportCard
-            label="Meja Aktif"
+            label="Meja Terisi"
             delta={deltaData?.mejaAktif}
             decorIcon={<Users size={80} />}
           />

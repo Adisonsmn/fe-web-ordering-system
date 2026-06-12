@@ -25,7 +25,7 @@ const PesananManagementPage: FC = () => {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-dark/40" />
             <Input
               type="text"
-              placeholder="Cari ID / No. Meja"
+              placeholder="Cari ID / No. Meja / Menu"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-64 pl-10 h-10"

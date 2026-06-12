@@ -5,4 +5,5 @@ export * from './keranjang.types';
 export * from './meja.types';
 export * from './menu.types';
 export * from './pesanan.types';
+export * from './poin.types';
 export * from './promo.types';

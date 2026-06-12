@@ -5,7 +5,6 @@ import { ChevronDown, Plus, Upload, X } from 'lucide-react';
 import { type ChangeEvent, type FC, useEffect, useState } from 'react';
 import { uploadImage } from '../api/upload.api';
 import { useCreateMenu, useUpdateMenu } from '../hooks/useMenuAdmin';
-import { usePromoList } from '../hooks/usePromoList';
 
 interface MenuFormModalProps {
   isOpen: boolean;
@@ -42,7 +41,7 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
   const [form, setForm] = useState<CreateMenuRequest>(EMPTY_FORM);
   const [donenessInput, setDonenessInput] = useState('');
   const [spiceInput, setSpiceInput] = useState('');
-  const [activeTab, setActiveTab] = useState<'dasar' | 'detail' | 'promo'>('dasar');
+  const [activeTab, setActiveTab] = useState<'dasar' | 'detail'>('dasar');
 
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [heroFile, setHeroFile] = useState<File | null>(null);
@@ -52,7 +51,6 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
 
   const { mutate: createMenu, isPending: isCreating } = useCreateMenu();
   const { mutate: updateMenu, isPending: isUpdating } = useUpdateMenu();
-  const { data: promos } = usePromoList();
   const isPending = isCreating || isUpdating || isUploading;
 
   // Populate form when editing
@@ -212,9 +210,8 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
   };
 
   const TABS = [
-    { id: 'dasar' as const, label: 'Info Dasar' },
-    { id: 'detail' as const, label: 'Detail Tampilan' },
-    { id: 'promo' as const, label: 'Promo' },
+    { id: 'dasar' as const, label: 'Info Umum' },
+    { id: 'detail' as const, label: 'Detail Menu' },
   ];
 
   return (
@@ -306,13 +303,13 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
               </div>
             </div>
 
-            {/* Deskripsi Singkat */}
+            {/* Deskripsi */}
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="menu-description"
                 className="text-[13px] font-semibold text-slate-dark"
               >
-                Deskripsi Singkat
+                Deskripsi
               </label>
               <textarea
                 id="menu-description"
@@ -378,109 +375,9 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
           </>
         )}
 
-        {/* === TAB: Detail Tampilan === */}
+        {/* === TAB: Detail Menu === */}
         {activeTab === 'detail' && (
           <>
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="menu-title-line1"
-                className="text-[13px] font-semibold text-slate-dark"
-              >
-                Judul Baris 1 (Hero)
-              </label>
-              <Input
-                id="menu-title-line1"
-                placeholder="Contoh: Nasi Goreng"
-                value={form.titleLine1 ?? ''}
-                onChange={(e) => handleChange('titleLine1', e.target.value || null)}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="menu-title-line2"
-                className="text-[13px] font-semibold text-slate-dark"
-              >
-                Judul Baris 2 (Hero)
-              </label>
-              <Input
-                id="menu-title-line2"
-                placeholder="Contoh: Spesial"
-                value={form.titleLine2 ?? ''}
-                onChange={(e) => handleChange('titleLine2', e.target.value || null)}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-semibold text-slate-dark">
-                Gambar Hero (Detail Page)
-              </label>
-              <div className="flex items-start gap-4">
-                {(heroPreview || form.heroImageUrl) && (
-                  <div className="rounded-xl overflow-hidden w-full max-w-[200px] aspect-video shrink-0 border border-slate-dark/10 bg-slate-50 relative group">
-                    <img
-                      src={heroPreview || form.heroImageUrl || ''}
-                      alt="Hero Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setHeroFile(null);
-                          setHeroPreview(null);
-                          handleChange('heroImageUrl', null);
-                        }}
-                        className="text-white bg-red-500 rounded-full p-1 hover:bg-red-600 transition-colors"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <div className="flex-1">
-                  <label
-                    htmlFor="menu-hero-file"
-                    className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-slate-dark/20 rounded-xl cursor-pointer hover:border-teal-muted hover:bg-teal-muted/5 transition-colors"
-                  >
-                    <div className="flex flex-col items-center justify-center">
-                      <Upload className="w-6 h-6 text-slate-dark/40 mb-2" />
-                      <p className="text-xs text-slate-dark/60 text-center px-4">
-                        <span className="font-semibold text-teal-muted">Klik untuk unggah</span>
-                      </p>
-                    </div>
-                    <input
-                      id="menu-hero-file"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleHeroChange}
-                    />
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="menu-long-description"
-                className="text-[13px] font-semibold text-slate-dark"
-              >
-                Deskripsi Panjang (Detail Page)
-              </label>
-              <textarea
-                id="menu-long-description"
-                placeholder="Deskripsi lengkap yang muncul di halaman detail menu..."
-                value={form.longDescription ?? ''}
-                onChange={(e) => handleChange('longDescription', e.target.value || null)}
-                rows={4}
-                className="w-full bg-white border border-slate-dark/20 rounded-lg px-4 py-3 text-[14px] text-slate-dark focus:outline-none focus:border-teal-muted focus:ring-1 focus:ring-teal-muted placeholder:text-slate-dark/40 resize-none transition-colors"
-              />
-            </div>
-
             {/* Doneness Options */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
@@ -588,86 +485,6 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
               )}
             </div>
           </>
-        )}
-
-        {/* === TAB: Promo === */}
-        {activeTab === 'promo' && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] text-slate-dark/60">
-              Pilih promo yang akan diterapkan pada menu ini. Harga efektif akan dihitung secara
-              otomatis berdasarkan tipe dan nilai diskon.
-            </p>
-
-            {/* No promo option */}
-            <label
-              className={cn(
-                'flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors',
-                !form.promoId
-                  ? 'border-teal-muted bg-teal-muted/5'
-                  : 'border-slate-dark/10 hover:border-slate-dark/20',
-              )}
-            >
-              <input
-                type="radio"
-                name="promo-select"
-                checked={!form.promoId}
-                onChange={() => handleChange('promoId', null)}
-                className="accent-teal-muted"
-              />
-              <div>
-                <p className="text-[14px] font-semibold text-slate-dark">Tanpa Promo</p>
-                <p className="text-[12px] text-slate-dark/50">Harga normal berlaku</p>
-              </div>
-            </label>
-
-            {/* Promo list */}
-            {promos && promos.length > 0 ? (
-              <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-1">
-                {promos
-                  .filter((p) => p.isActive)
-                  .map((promo) => (
-                    <label
-                      key={promo.promoId}
-                      className={cn(
-                        'flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-colors',
-                        form.promoId === promo.promoId
-                          ? 'border-deep-orange bg-deep-orange/5'
-                          : 'border-slate-dark/10 hover:border-slate-dark/20',
-                      )}
-                    >
-                      <input
-                        type="radio"
-                        name="promo-select"
-                        checked={form.promoId === promo.promoId}
-                        onChange={() => handleChange('promoId', promo.promoId)}
-                        className="accent-deep-orange mt-0.5"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-[14px] font-semibold text-slate-dark truncate">
-                            {promo.namaPromo}
-                          </p>
-                          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-deep-orange/10 text-deep-orange shrink-0">
-                            {promo.tipeDiskon === 'PERSEN'
-                              ? `${promo.nilaiDiskon}%`
-                              : `Rp ${promo.nilaiDiskon.toLocaleString('id-ID')}`}
-                          </span>
-                        </div>
-                        {promo.description && (
-                          <p className="text-[12px] text-slate-dark/50 mt-0.5 line-clamp-1">
-                            {promo.description}
-                          </p>
-                        )}
-                      </div>
-                    </label>
-                  ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-slate-dark/40 text-[14px]">
-                Tidak ada promo aktif yang tersedia.
-              </div>
-            )}
-          </div>
         )}
       </div>
 

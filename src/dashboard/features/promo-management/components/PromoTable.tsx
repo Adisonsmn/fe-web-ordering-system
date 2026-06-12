@@ -21,8 +21,10 @@ export const PromoTable: FC<PromoTableProps> = ({ promos, isLoading, onEdit, onD
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const startDate = new Date(promo.tanggalMulai);
-    const endDate = new Date(promo.tanggalSelesai);
+    // Append T00:00:00 agar diparsing sebagai local timezone, bukan UTC midnight
+    // Tanpa ini: new Date("2026-06-12") = UTC 00:00 = WIB 07:00 → jam 01:00 WIB masih "Terjadwal"
+    const startDate = new Date(promo.tanggalMulai + 'T00:00:00');
+    const endDate = new Date(promo.tanggalSelesai + 'T00:00:00');
 
     if (today < startDate) return 'Terjadwal';
     if (today > endDate) return 'Selesai';

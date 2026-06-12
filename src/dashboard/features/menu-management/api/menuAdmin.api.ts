@@ -55,3 +55,17 @@ export const toggleMenuAvailability = async ({
 export const deleteMenu = async (menuId: string): Promise<void> => {
   await apiClient.delete(`/menu/${menuId}`);
 };
+
+export const patchMenuPromo = async ({
+  menuId,
+  promoId,
+}: {
+  menuId: string;
+  promoId: string | null;
+}): Promise<MenuDetailResponse> => {
+  const data = await apiClient.patch<unknown, MenuDetailResponse>(`/menu/${menuId}/promo`, {
+    promoId,
+  });
+  return data;
+};
+

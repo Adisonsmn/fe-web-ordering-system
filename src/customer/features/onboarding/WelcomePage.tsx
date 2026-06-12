@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, TableProperties } from 'lucide-react';
 import { type FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRestoConfig } from '../splash/hooks/useRestoConfig';
+import { useMenuPopuler } from './hooks/useMenuPopuler';
 import { useScanMeja } from './hooks/useScanMeja';
 import { useMejaStore } from './store/mejaStore';
 
@@ -19,6 +20,9 @@ const WelcomePage: FC = () => {
   useRestoConfig();
   const restoName = useRestoStore((state) => state.restoName);
   const restoAlamat = useRestoStore((state) => state.alamat);
+
+  // Fetch menu populer #1 untuk card "Sajian Spesial Hari Ini"
+  const { data: menuPopuler } = useMenuPopuler();
 
   // Retrieve table parameter from localStorage
   const rawTableParam = localStorage.getItem('nomorMeja');
@@ -159,24 +163,36 @@ const WelcomePage: FC = () => {
           </div>
         </div>
 
-        {/* 3. Atmospheric Food Image Decor Card */}
-        <div className="relative h-[160px] w-full rounded-[12px] overflow-hidden drop-shadow-[0_2px_5px_rgba(0,0,0,0.03)] border border-slate-dark/5">
-          {/* Food image overlayed with shadow gradient */}
-          <img
-            alt="Sajian Spesial Nasi Campur"
-            className="absolute inset-0 w-full h-full object-cover"
-            src="https://images.unsplash.com/photo-1596797038530-2c107229654b?q=80&w=600&auto=format&fit=crop"
-          />
-          {/* Gradient tint */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+        {/* 3. Menu Populer Card - "Sajian Spesial Hari Ini" */}
+        {menuPopuler && (
+          <div
+            className="relative h-[160px] w-full rounded-[12px] overflow-hidden drop-shadow-[0_2px_5px_rgba(0,0,0,0.03)] border border-slate-dark/5 cursor-pointer active:scale-[0.99] transition-transform"
+            onClick={() => navigate(`/customer/menu/${menuPopuler.menuId}`)}
+          >
+            {/* Food image overlayed with shadow gradient */}
+            {menuPopuler.imageUrl ? (
+              <img
+                alt={menuPopuler.menuName}
+                className="absolute inset-0 w-full h-full object-cover"
+                src={menuPopuler.imageUrl}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-muted/30 to-slate-dark/40" />
+            )}
+            {/* Gradient tint */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-          {/* Special menu badge description */}
-          <div className="absolute bottom-0 left-0 p-[16px]">
-            <span className="text-[10px] font-sans font-medium text-white/80 tracking-[1px] uppercase">
-              Sajian Spesial Hari Ini: Nasi Campur Bali
-            </span>
+            {/* Special menu badge description */}
+            <div className="absolute bottom-0 left-0 right-0 p-[16px] flex items-end justify-between">
+              <span className="text-[10px] font-sans font-medium text-white/80 tracking-[1px] uppercase">
+                Sajian Spesial Hari Ini: {menuPopuler.menuName}
+              </span>
+              <span className="text-[11px] font-sans font-bold text-deep-orange bg-black/40 px-2 py-0.5 rounded-full">
+                #{1} Populer
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
