@@ -105,15 +105,6 @@ export const MenuFormModal: FC<MenuFormModalProps> = ({ isOpen, onClose, menu, o
     }
   };
 
-  const handleHeroChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setHeroFile(file);
-      const url = URL.createObjectURL(file);
-      setHeroPreview(url);
-    }
-  };
-
   const handleChange = (field: keyof CreateMenuRequest, value: unknown) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };

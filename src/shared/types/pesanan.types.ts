@@ -51,11 +51,6 @@ export interface UpdateStatusPesananRequest {
   estimasiMenit?: number;
 }
 
-export interface PoinBalanceResponse {
-  totalPoint: number;
-  rupiahPerPoin: number;
-}
-
 export interface PoinEstimasiResponse {
   estimatedPoints: number;
 }
