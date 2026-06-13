@@ -61,15 +61,14 @@ export interface ActivityItem {
 }
 
 export interface RatingSentimenResponse {
-  bintang: number;  // matches backend record field name
-  count: number;    // matches backend record field name
+  bintang: number; // matches backend record field name
+  count: number; // matches backend record field name
 }
 
-
 export interface PoinPromoStatsResponse {
-  totalPoinDiterbitkan: number;   // total poin EARN
-  totalPoinDigunakan: number;     // total poin REDEEM
-  totalDiskonPromo: number;       // rupiah diskon dari promo
+  totalPoinDiterbitkan: number; // total poin EARN
+  totalPoinDigunakan: number; // total poin REDEEM
+  totalDiskonPromo: number; // rupiah diskon dari promo
   totalPesananPakaiPromo: number; // jumlah pesanan pakai promo
   topPromo?: {
     promoId: string;

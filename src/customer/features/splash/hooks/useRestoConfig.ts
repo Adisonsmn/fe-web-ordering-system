@@ -16,8 +16,8 @@ export const useRestoConfig = () => {
       setRestoConfig(data.isOpen, data.namaRestoran, data.alamat);
       return data;
     },
-    staleTime: 1000 * 30,        // 30 detik — agar perubahan status cepat terdeteksi
-    refetchInterval: 1000 * 30,  // Poll setiap 30 detik untuk auto-detect auto-close/open
-    refetchOnWindowFocus: true,  // Refetch juga saat user kembali ke tab
+    staleTime: 1000 * 30, // 30 detik — agar perubahan status cepat terdeteksi
+    refetchInterval: 1000 * 30, // Poll setiap 30 detik untuk auto-detect auto-close/open
+    refetchOnWindowFocus: true, // Refetch juga saat user kembali ke tab
   });
 };

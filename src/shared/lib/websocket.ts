@@ -1,5 +1,5 @@
-import { Client } from '@stomp/stompjs';
 import type { IMessage } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 // ── Subscription Registry ─────────────────────────────────────────────────────

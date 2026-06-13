@@ -1,7 +1,12 @@
+import { useAuthStore } from '@shared/stores/authStore';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@shared/stores/authStore';
-import { getMyProfile, logoutUser, updateMyProfile, type UpdateProfilePayload } from '../api/account.api';
+import {
+  getMyProfile,
+  logoutUser,
+  type UpdateProfilePayload,
+  updateMyProfile,
+} from '../api/account.api';
 
 export const accountKeys = {
   profile: ['account', 'profile'] as const,

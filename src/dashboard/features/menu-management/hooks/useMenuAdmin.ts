@@ -9,7 +9,6 @@ import {
   updateMenu,
 } from '../api/menuAdmin.api';
 
-
 export const menuAdminKeys = {
   all: ['menu-admin'] as const,
   list: (params?: object) => [...menuAdminKeys.all, 'list', params] as const,
@@ -92,4 +91,3 @@ export const usePatchMenuPromo = () => {
     },
   });
 };
-

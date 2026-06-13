@@ -61,18 +61,9 @@ const LoginForm: FC = () => {
 
       {/* Password Input */}
       <div className="w-full flex flex-col gap-[8px]">
-        <div className="w-full flex items-center justify-between">
-          <label htmlFor="password" className="text-[#5b4039] text-[16px] leading-[24px] font-sans">
-            Kata Sandi
-          </label>
-          <button
-            type="button"
-            className="text-[#316669] text-[11px] leading-[16.5px] font-sans tracking-wide active:opacity-70 transition-opacity opacity-50 cursor-not-allowed"
-            title="Fitur ini belum tersedia"
-          >
-            Lupa kata sandi?
-          </button>
-        </div>
+        <label htmlFor="password" className="text-[#5b4039] text-[16px] leading-[24px] font-sans">
+          Kata Sandi
+        </label>
         <div className="w-full bg-white border border-[#e4beb4] rounded-[8px] h-[56px] flex items-center focus-within:border-[#316669] focus-within:ring-1 focus-within:ring-[#316669] transition-all overflow-hidden">
           <input
             id="password"

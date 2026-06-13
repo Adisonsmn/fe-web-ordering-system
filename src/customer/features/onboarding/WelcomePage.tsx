@@ -1,4 +1,5 @@
 import { useRestoStore } from '@shared/stores/restoStore';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { ArrowRight, CheckCircle2, TableProperties } from 'lucide-react';
 import { type FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -174,7 +175,8 @@ const WelcomePage: FC = () => {
               <img
                 alt={menuPopuler.menuName}
                 className="absolute inset-0 w-full h-full object-cover"
-                src={menuPopuler.imageUrl}
+                src={getOptimizedImageUrl(menuPopuler.imageUrl, { width: 400, height: 200 })}
+                loading="lazy"
               />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-teal-muted/30 to-slate-dark/40" />

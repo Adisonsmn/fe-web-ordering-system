@@ -34,7 +34,7 @@ const OverviewPage: FC = () => {
       // trendData adalah array per hari dalam bulan (index 0 = hari ke-1)
       const today = new Date();
       const todayDay = today.getDate(); // 1-31
-      const endIdx = todayDay;          // exclusive — sampai hari ini
+      const endIdx = todayDay; // exclusive — sampai hari ini
       const startIdx = Math.max(0, todayDay - 7); // mulai 7 hari sebelum hari ini
       return trendData?.slice(startIdx, endIdx) ?? [];
     }
@@ -45,8 +45,6 @@ const OverviewPage: FC = () => {
   // Hitung dari data meja aktual (sama dengan Dashboard Meja) agar selalu sinkron
   const mejaOkupansi = mejaData?.filter((m) => m.isOccupied).length || 0;
   const progressPct = mejaTotal > 0 ? Math.round((mejaOkupansi / mejaTotal) * 100) : 0;
-
-
 
   return (
     <div className="flex flex-col gap-8 max-w-[1400px] mx-auto">

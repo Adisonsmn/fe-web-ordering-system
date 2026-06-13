@@ -1,6 +1,7 @@
 import { useTambahItem } from '@customer/features/keranjang/hooks/useKeranjang';
 import { cn } from '@shared/utils/cn';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { Star, X } from 'lucide-react';
 import { type FC, useEffect, useState } from 'react';
 import { Drawer } from 'vaul';
@@ -119,9 +120,13 @@ const MenuDetailSheet: FC<MenuDetailSheetProps> = ({ menuId, open, onClose }) =>
               <div className="w-full h-[220px] bg-[#e2e2e2] relative">
                 {menu?.heroImageUrl || menu?.imageUrl ? (
                   <img
-                    src={menu.heroImageUrl || menu.imageUrl!}
+                    src={getOptimizedImageUrl(menu.heroImageUrl || menu.imageUrl, {
+                      width: 600,
+                      height: 340,
+                    })}
                     alt={menu?.menuName}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-dark/30">

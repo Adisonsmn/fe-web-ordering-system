@@ -68,4 +68,3 @@ export const patchMenuPromo = async ({
   });
   return data;
 };
-

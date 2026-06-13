@@ -19,7 +19,9 @@ export interface UpdateProfilePayload {
 }
 
 /** Update profil pengguna (name, phone, avatarUrl) */
-export const updateMyProfile = async (payload: UpdateProfilePayload): Promise<UserProfileResponse> => {
+export const updateMyProfile = async (
+  payload: UpdateProfilePayload,
+): Promise<UserProfileResponse> => {
   const data = await apiClient.put<unknown, UserProfileResponse>('/auth/me', {
     name: payload.name,
     phone: payload.phone ?? null,

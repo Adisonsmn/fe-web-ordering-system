@@ -1,10 +1,10 @@
 import BottomNav from '@shared/components/layout/BottomNav';
 import { useAuthStore } from '@shared/stores/authStore';
-import { LogOut, Pencil, Medal, Camera, X, Check } from 'lucide-react';
-import { type FC, useState, useRef, useEffect } from 'react';
+import { Camera, Check, ChevronLeft, LogOut, Medal, Pencil, X } from 'lucide-react';
+import { type FC, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMyProfile, useLogout, useUpdateProfile } from './hooks/useAccount';
 import { uploadAvatarCustomer } from './api/upload.api';
+import { useLogout, useMyProfile, useUpdateProfile } from './hooks/useAccount';
 
 /* ─── Skeleton ───────────────────────────────────────────── */
 const SkeletonProfile: FC = () => (
@@ -239,7 +239,14 @@ const EditProfileModal: FC<EditProfileModalProps> = ({
             {isLoading ? (
               <span className="flex items-center gap-2">
                 <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
                 {isUploading ? 'Mengunggah foto...' : 'Menyimpan...'}
@@ -289,7 +296,11 @@ const AccountPage: FC = () => {
     logout();
   };
 
-  const handleSaveProfile = (data: { name: string; phone: string | null; avatarUrl: string | null }) => {
+  const handleSaveProfile = (data: {
+    name: string;
+    phone: string | null;
+    avatarUrl: string | null;
+  }) => {
     updateProfile(
       {
         name: data.name,
@@ -314,12 +325,18 @@ const AccountPage: FC = () => {
 
   return (
     <div className="relative w-full min-h-screen bg-[#f5f5f5] font-sans pb-[100px]">
-      {/* ── Top Bar ─────────────────────────────────────── */}
-      <div className="sticky top-0 z-20 bg-[#f5f5f5] pt-[52px] pb-[12px] px-[20px] flex items-center justify-between border-b border-[#FF5722]/20">
-        <span className="font-serif font-bold text-[22px] text-[#303841]">
-          Profil Saya
-        </span>
-      </div>
+      {/* ── Top App Bar ─────────────────────────────────── */}
+      <header className="sticky top-0 z-20 bg-[#f5f5f5] h-[64px] px-[20px] flex items-center gap-[12px] border-b border-[#FF5722]/20 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center text-[#303841] active:opacity-60 transition-opacity"
+          aria-label="Kembali"
+        >
+          <ChevronLeft size={22} strokeWidth={2.5} />
+        </button>
+        <h1 className="font-serif font-bold text-[22px] text-[#303841]">Profil Saya</h1>
+      </header>
 
       {/* ── Success Toast ─────────────────────────────── */}
       {successMessage && (
@@ -329,8 +346,8 @@ const AccountPage: FC = () => {
         </div>
       )}
 
-      {/* ── Avatar & Info User ───────────────────────────── */}
-      <div className="flex flex-col items-center pt-[32px] pb-[24px] px-[20px]">
+      {/* ── Avatar & Info User ────────────────────────── */}
+      <div className="flex flex-col items-center pt-[20px] pb-[24px] px-[20px]">
         {user === null ? (
           <SkeletonProfile />
         ) : (
@@ -373,9 +390,7 @@ const AccountPage: FC = () => {
             </h1>
 
             {/* Email */}
-            <p className="font-sans text-[14px] text-[#303841]/60 mt-[2px]">
-              {displayEmail}
-            </p>
+            <p className="font-sans text-[14px] text-[#303841]/60 mt-[2px]">{displayEmail}</p>
 
             {/* Badge Member */}
             {displayStatus && (
@@ -399,10 +414,7 @@ const AccountPage: FC = () => {
         <div className="bg-white rounded-[16px] shadow-[0_1px_6px_rgba(0,0,0,0.06)] overflow-hidden">
           <InfoField label="Nama Lengkap" value={displayName} />
           <div className="h-px bg-[#303841]/8 mx-[20px]" />
-          <InfoField
-            label="Nomor Telepon"
-            value={displayPhone}
-          />
+          <InfoField label="Nomor Telepon" value={displayPhone} />
           <div className="h-px bg-[#303841]/8 mx-[20px]" />
           <InfoField label="Email" value={displayEmail} />
         </div>

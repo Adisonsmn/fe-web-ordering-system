@@ -8,17 +8,23 @@ export const getPoinBalance = async (): Promise<PoinBalanceResponse> => {
 };
 
 /** Ambil riwayat transaksi poin (paginated) */
-export const getPoinRiwayat = async (page = 0, size = 20): Promise<{
+export const getPoinRiwayat = async (
+  page = 0,
+  size = 20,
+): Promise<{
   content: PoinRiwayatResponse[];
   totalPages: number;
   totalElements: number;
   page: number;
 }> => {
-  const data = await apiClient.get<unknown, {
-    content: PoinRiwayatResponse[];
-    totalPages: number;
-    totalElements: number;
-    page: number;
-  }>('/poin/riwayat', { params: { page, size, sort: 'createdAt,desc' } });
+  const data = await apiClient.get<
+    unknown,
+    {
+      content: PoinRiwayatResponse[];
+      totalPages: number;
+      totalElements: number;
+      page: number;
+    }
+  >('/poin/riwayat', { params: { page, size, sort: 'createdAt,desc' } });
   return data;
 };

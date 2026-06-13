@@ -1,6 +1,7 @@
 import type { MenuResponse } from '@shared/types';
 import { cn } from '@shared/utils/cn';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { Plus } from 'lucide-react';
 import type { FC } from 'react';
 
@@ -31,9 +32,10 @@ const PairingSuggestion: FC<PairingSuggestionProps> = ({ pairings, onAdd, classN
               <div className="w-[44px] h-[44px] rounded-full overflow-hidden shrink-0 bg-[#f5f5f5]">
                 {menu.imageUrl ? (
                   <img
-                    src={menu.imageUrl}
+                    src={getOptimizedImageUrl(menu.imageUrl, { width: 88, height: 88 })}
                     alt={menu.menuName}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-dark/30 text-[10px]">

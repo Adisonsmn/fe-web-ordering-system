@@ -41,7 +41,6 @@ const PesananManagementPage: FC = () => {
             RIWAYAT PESANAN
           </Button>
         </div>
-
       </div>
 
       {/* Kanban Board Area */}

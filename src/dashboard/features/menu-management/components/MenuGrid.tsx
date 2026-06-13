@@ -42,13 +42,14 @@ export const MenuGrid: FC<MenuGridProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[24px]">
-      {menus.map((menu) => (
+      {menus.map((menu, index) => (
         <MenuCard
           key={menu.menuId}
           menu={menu}
           onEdit={onEdit}
           onToggleAvailability={onToggleAvailability}
           isToggling={isTogglingId === menu.menuId}
+          index={index}
         />
       ))}
     </div>

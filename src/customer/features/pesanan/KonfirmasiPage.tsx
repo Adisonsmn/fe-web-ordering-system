@@ -1,5 +1,6 @@
 import { useAuthStore } from '@shared/stores/authStore';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { ChevronLeft, ChevronRight, MapPin, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -150,9 +151,10 @@ const KonfirmasiPage = () => {
                 <div className="w-[80px] h-[80px] rounded-[8px] bg-slate-200 shrink-0 overflow-hidden">
                   {item.imageUrl ? (
                     <img
-                      src={item.imageUrl}
+                      src={getOptimizedImageUrl(item.imageUrl, { width: 160, height: 160 })}
                       alt={item.menuName}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <div className="w-full h-full bg-[#f3f4f6]" />

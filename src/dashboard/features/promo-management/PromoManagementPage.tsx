@@ -4,6 +4,7 @@ import type { CreatePromoRequest, PromoResponse } from '@shared/types';
 import { Activity, History, Plus, Wallet } from 'lucide-react';
 import { type FC, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMenuAdminList, usePatchMenuPromo } from '../menu-management/hooks/useMenuAdmin';
 import { PromoFormModal, PromoKpiCard, PromoTable } from './components';
 import {
   useCreatePromo,
@@ -11,7 +12,6 @@ import {
   usePromoList,
   useUpdatePromo,
 } from './hooks/usePromoManagement';
-import { usePatchMenuPromo, useMenuAdminList } from '../menu-management/hooks/useMenuAdmin';
 
 export const PromoManagementPage: FC = () => {
   const navigate = useNavigate();
@@ -109,9 +109,7 @@ export const PromoManagementPage: FC = () => {
       {/* Header Section */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-[22px] font-serif font-bold text-slate-dark mb-1">
-            Kelola Promo
-          </h1>
+          <h1 className="text-[22px] font-serif font-bold text-slate-dark mb-1">Kelola Promo</h1>
           <p className="text-[14px] text-slate-dark/60">
             Pantau dan kelola semua promosi dan diskon aktif.
           </p>

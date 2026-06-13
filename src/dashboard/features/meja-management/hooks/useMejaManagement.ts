@@ -4,8 +4,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { createMeja, deleteMeja, getAllMeja, updateMejaStatus } from '../api/meja.api';
 
-
-
 export const mejaKeys = {
   all: ['meja-management'] as const,
   list: () => [...mejaKeys.all, 'list'] as const,

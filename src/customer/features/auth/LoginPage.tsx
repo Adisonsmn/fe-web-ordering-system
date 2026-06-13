@@ -3,7 +3,6 @@ import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 
-
 const LoginPage: FC = () => {
   const navigate = useNavigate();
 
@@ -38,7 +37,6 @@ const LoginPage: FC = () => {
 
         {/* Login Form */}
         <LoginForm />
-
 
         {/* Footer Link */}
         <div className="w-full flex justify-center mt-auto">

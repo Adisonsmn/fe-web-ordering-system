@@ -13,8 +13,8 @@ export const useRestoConfigAdmin = () => {
   return useQuery({
     queryKey: restoConfigAdminKeys.all,
     queryFn: getRestoConfigAdmin,
-    staleTime: 1000 * 30,        // 30 detik — sidebar harus cepat update setelah save
-    refetchInterval: 1000 * 30,  // Poll setiap 30 detik sebagai safety net
+    staleTime: 1000 * 30, // 30 detik — sidebar harus cepat update setelah save
+    refetchInterval: 1000 * 30, // Poll setiap 30 detik sebagai safety net
     refetchOnWindowFocus: true,
   });
 };

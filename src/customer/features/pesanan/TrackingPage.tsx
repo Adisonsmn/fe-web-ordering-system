@@ -1,7 +1,9 @@
+import { useMenuList } from '@customer/features/katalog/hooks/useMenuList';
 import BottomNav from '@shared/components/layout/BottomNav';
+import { formatRupiah } from '@shared/utils/currency';
 import { formatJam } from '@shared/utils/date';
-import { CheckCircle2, ChevronLeft, HelpCircle, Receipt, Search, Star } from 'lucide-react';
-import { useEffect } from 'react';
+import { CheckCircle2, ChevronLeft, HelpCircle, Receipt, ShoppingBag, Star } from 'lucide-react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import EstimasiBanner from './components/EstimasiBanner';
 import OrderItemList from './components/OrderItemList';
@@ -13,6 +15,15 @@ const TrackingPage = () => {
   const { pesananId } = useParams<{ pesananId: string }>();
   const navigate = useNavigate();
   const { data: pesanan, isLoading, isError } = usePesananStatus(pesananId || '');
+  const { data: menuList } = useMenuList({ available: true });
+
+  // Ambil 4 menu acak dari list (exclude yang sudah dipesan)
+  const rekomendasiMenu = useMemo(() => {
+    if (!menuList) return [];
+    const pesananMenuIds = new Set(pesanan?.detailPesanan?.map((d) => d.menuId) ?? []);
+    const filtered = menuList.filter((m) => !pesananMenuIds.has(m.menuId));
+    return [...filtered].sort(() => Math.random() - 0.5).slice(0, 4);
+  }, [menuList, pesanan?.detailPesanan]);
 
   useEffect(() => {
     if (pesananId) {
@@ -50,24 +61,19 @@ const TrackingPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-off-white max-w-[390px] mx-auto w-full relative pb-[120px]">
       {/* Top App Bar — sesuai Figma Frame 11: bg #f9f9f9, border #e4beb4 */}
-      <header className="h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center justify-between px-[20px] sticky top-0 z-50">
-        <button
-          type="button"
-          onClick={() => navigate('/customer/katalog')}
-          className="w-[16px] h-[16px] flex items-center justify-center text-[#b02f00] active:opacity-70"
-        >
-          <ChevronLeft className="w-[16px] h-[16px]" />
-        </button>
-        <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">
-          Aroma Senja
-        </h1>
-        <button
-          type="button"
-          aria-label="Cari"
-          className="w-[18px] h-[18px] flex items-center justify-center text-[#b02f00] active:opacity-70"
-        >
-          <Search className="w-[18px] h-[18px]" />
-        </button>
+      <header className="h-[64px] bg-[#f9f9f9] border-b border-[#e4beb4] shadow-[0px_1px_1px_rgba(0,0,0,0.05)] flex items-center px-[20px] sticky top-0 z-50">
+        <div className="flex items-center gap-[10px]">
+          <button
+            type="button"
+            onClick={() => navigate('/customer/katalog')}
+            className="flex items-center justify-center text-[#b02f00] active:opacity-70"
+          >
+            <ChevronLeft className="w-[20px] h-[20px]" />
+          </button>
+          <h1 className="font-serif font-bold text-[20px] text-[#b02f00] leading-[28px]">
+            Aroma Senja
+          </h1>
+        </div>
       </header>
 
       {isCompleted ? (
@@ -139,16 +145,63 @@ const TrackingPage = () => {
             </div>
           </div>
 
-          {/* Mungkin Anda Suka Placeholder */}
+          {/* Mungkin Anda Suka */}
           <div className="px-5 pb-8 w-full">
-            <h3 className="font-sans font-bold text-slate-dark/80 text-[14px] tracking-wide mb-4 uppercase">
-              Mungkin Anda Suka
+            <h3 className="font-sans font-normal text-[#5b4039] text-[16px] mb-4 uppercase tracking-wide">
+              MUNGKIN ANDA SUKA
             </h3>
-            <OrderItemList
-              items={pesanan.detailPesanan}
-              totalHarga={pesanan.totalHarga}
-              isCompleted={true}
-            />
+
+            {rekomendasiMenu.length === 0 ? (
+              // Skeleton loading
+              <div className="grid grid-cols-2 gap-4">
+                {[1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white rounded-[12px] p-[13px] shadow-[0px_4px_10px_rgba(48,56,65,0.08)] border border-[rgba(228,190,180,0.2)] animate-pulse"
+                  >
+                    <div className="h-[112px] bg-slate-200 rounded-[8px] mb-2" />
+                    <div className="h-4 bg-slate-200 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-slate-200 rounded w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                {rekomendasiMenu.map((menu) => (
+                  <button
+                    key={menu.menuId}
+                    type="button"
+                    onClick={() => navigate('/customer/katalog')}
+                    className="bg-white rounded-[12px] p-[13px] shadow-[0px_4px_10px_rgba(48,56,65,0.08)] border border-[rgba(228,190,180,0.2)] flex flex-col gap-2 items-start text-left active:scale-[0.97] transition-transform"
+                  >
+                    {/* Foto Menu */}
+                    <div className="w-full h-[112px] rounded-[8px] bg-slate-200 overflow-hidden shrink-0">
+                      {menu.imageUrl ? (
+                        <img
+                          src={menu.imageUrl}
+                          alt={menu.menuName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#e2e2e2] flex items-center justify-center">
+                          <ShoppingBag className="w-8 h-8 text-slate-400" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Nama Menu */}
+                    <p className="font-sans font-bold text-[16px] text-[#1a1c1c] leading-[24px] line-clamp-2 w-full">
+                      {menu.menuName}
+                    </p>
+
+                    {/* Harga */}
+                    <p className="font-sans font-normal text-[16px] text-[#316669] leading-[24px]">
+                      {formatRupiah(menu.price)}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ) : (

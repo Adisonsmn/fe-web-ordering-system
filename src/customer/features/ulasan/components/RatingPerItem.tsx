@@ -1,4 +1,5 @@
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import type { FC } from 'react';
 import StarRating from './StarRating';
 
@@ -24,7 +25,12 @@ const RatingPerItem: FC<RatingPerItemProps> = ({
       <div className="flex items-center gap-4 flex-1">
         <div className="w-12 h-12 rounded-lg bg-slate-dark/10 overflow-hidden shrink-0">
           {imageUrl ? (
-            <img src={imageUrl} alt={menuName} className="w-full h-full object-cover" />
+            <img
+              src={getOptimizedImageUrl(imageUrl, { width: 96, height: 96 })}
+              alt={menuName}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-slate-dark/30 text-[10px] uppercase font-bold text-center p-1">
               No Img

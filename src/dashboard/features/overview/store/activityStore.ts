@@ -1,7 +1,7 @@
 import type { ActivityItem } from '@shared/types';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface ActivityState {
   activities: ActivityItem[];
@@ -32,4 +32,3 @@ export const useActivityStore = create<ActivityState>()(
     },
   ),
 );
-

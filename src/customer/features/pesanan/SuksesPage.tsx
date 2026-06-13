@@ -1,4 +1,5 @@
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { CheckCircle2, ChevronLeft } from 'lucide-react';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -165,9 +166,10 @@ const SuksesPage = () => {
                   <div className="w-[48px] h-[48px] rounded-[8px] bg-slate-200 shrink-0 overflow-hidden">
                     {item.imageUrl ? (
                       <img
-                        src={item.imageUrl}
+                        src={getOptimizedImageUrl(item.imageUrl, { width: 96, height: 96 })}
                         alt={item.menuName}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="w-full h-full bg-[#f3f4f6]" />

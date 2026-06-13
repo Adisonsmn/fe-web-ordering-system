@@ -1,9 +1,11 @@
 import type { RouteObject } from 'react-router-dom';
 import CustomerApp from '../CustomerApp';
+import AccountPage from '../features/account/AccountPage';
 import LoginPage from '../features/auth/LoginPage';
 import RegisterPage from '../features/auth/RegisterPage';
 import KatalogPage from '../features/katalog/KatalogPage';
 import KeranjangPage from '../features/keranjang/KeranjangPage';
+import LoyaltiPage from '../features/loyalti/LoyaltiPage';
 import AuthChoicePage from '../features/onboarding/AuthChoicePage';
 import BlockedPage from '../features/onboarding/BlockedPage';
 import WelcomePage from '../features/onboarding/WelcomePage';
@@ -14,8 +16,6 @@ import SplashScreen from '../features/splash/SplashScreen';
 import StrukPage from '../features/struk/StrukPage';
 import UlasanPage from '../features/ulasan/UlasanPage';
 import UlasanSuksesPage from '../features/ulasan/UlasanSuksesPage';
-import LoyaltiPage from '../features/loyalti/LoyaltiPage';
-import AccountPage from '../features/account/AccountPage';
 
 export const customerRoutes: RouteObject[] = [
   {

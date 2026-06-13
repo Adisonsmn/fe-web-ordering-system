@@ -1,6 +1,7 @@
 import QuantityStepper from '@customer/features/menu-detail/components/QuantityStepper';
 import type { DetailKeranjangResponse } from '@shared/types';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { Trash2 } from 'lucide-react';
 import type { FC } from 'react';
 import { useRemoveItem, useUpdateItem } from '../hooks/useKeranjang';
@@ -36,7 +37,12 @@ const KeranjangItem: FC<KeranjangItemProps> = ({ item }) => {
       {/* Gambar */}
       <div className="w-[96px] h-[96px] rounded-lg bg-slate-200 overflow-hidden shrink-0">
         {item.imageUrl ? (
-          <img src={item.imageUrl} alt={item.menuName} className="w-full h-full object-cover" />
+          <img
+            src={getOptimizedImageUrl(item.imageUrl, { width: 192, height: 192 })}
+            alt={item.menuName}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
         ) : (
           <div className="w-full h-full bg-[#f3f4f6]" />
         )}

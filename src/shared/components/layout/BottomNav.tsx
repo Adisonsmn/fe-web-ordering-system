@@ -162,7 +162,6 @@ const BottomNav: FC = () => {
             </span>
           </button>
         )}
-
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import type { MenuResponse } from '@shared/types';
 import { cn } from '@shared/utils/cn';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import type { FC } from 'react';
 import { AvailabilityToggle } from './AvailabilityToggle';
 
@@ -8,6 +9,7 @@ interface MenuCardProps {
   onEdit: (menu: MenuResponse) => void;
   onToggleAvailability: (menuId: string, isAvailable: boolean) => void;
   isToggling?: boolean;
+  index?: number;
 }
 
 export const MenuCard: FC<MenuCardProps> = ({
@@ -15,6 +17,7 @@ export const MenuCard: FC<MenuCardProps> = ({
   onEdit,
   onToggleAvailability,
   isToggling = false,
+  index,
 }) => {
   const hasPromo = menu.promo !== null;
   const activePromo = menu.promo;
@@ -60,9 +63,11 @@ export const MenuCard: FC<MenuCardProps> = ({
       <div className="h-[192px] relative shrink-0 w-full overflow-hidden rounded-t-[11px]">
         {menu.imageUrl ? (
           <img
-            src={menu.imageUrl}
+            src={getOptimizedImageUrl(menu.imageUrl, { width: 500, height: 300 })}
             alt={menu.menuName}
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            loading={index !== undefined && index < 4 ? 'eager' : 'lazy'}
+            fetchPriority={index !== undefined && index < 4 ? 'high' : undefined}
           />
         ) : (
           <div className="absolute inset-0 bg-slate-100 flex items-center justify-center text-4xl">

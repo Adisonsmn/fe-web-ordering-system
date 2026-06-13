@@ -59,11 +59,7 @@ const AdminLoginPage: FC = () => {
         </div>
 
         {/* Footer Actions */}
-        <div className="w-full flex items-center justify-center gap-4 mt-2">
-          <button className="font-sans font-bold text-white/60 hover:text-white transition-colors text-[12px] tracking-[0.6px]">
-            Lupa Kata Sandi?
-          </button>
-          <div className="w-1 h-1 rounded-full bg-white/40" />
+        <div className="w-full flex items-center justify-center mt-2">
           <button className="font-sans font-bold text-white/60 hover:text-white transition-colors text-[12px] tracking-[0.6px]">
             Hubungi Support
           </button>

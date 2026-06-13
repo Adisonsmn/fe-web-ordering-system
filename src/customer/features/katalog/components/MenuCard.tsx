@@ -1,5 +1,6 @@
 import type { MenuResponse } from '@shared/types';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import { Plus } from 'lucide-react';
 import type { FC } from 'react';
 
@@ -35,9 +36,10 @@ const MenuCard: FC<MenuCardProps> = ({ menu, onAddToCart, isAddingToCart, onCard
       <div className="relative w-[76px] h-[76px] rounded-[8px] bg-slate-200 overflow-hidden shrink-0">
         {menu.imageUrl ? (
           <img
-            src={menu.imageUrl}
+            src={getOptimizedImageUrl(menu.imageUrl, { width: 152, height: 152 })}
             alt={menu.menuName}
             className={`w-full h-full object-cover ${!isAvailable && 'grayscale'}`}
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-full bg-[#f3f4f6]" />

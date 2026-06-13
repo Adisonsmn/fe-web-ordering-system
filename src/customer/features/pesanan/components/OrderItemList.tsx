@@ -1,6 +1,7 @@
 import type { DetailPesananResponse } from '@shared/types';
 import { cn } from '@shared/utils/cn';
 import { formatRupiah } from '@shared/utils/currency';
+import { getOptimizedImageUrl } from '@shared/utils/image';
 import type { FC } from 'react';
 
 interface OrderItemListProps {
@@ -45,9 +46,10 @@ const OrderItemList: FC<OrderItemListProps> = ({
             <div className="w-[80px] h-[80px] rounded-lg overflow-hidden shrink-0 bg-slate-100 flex items-center justify-center">
               {item.imageUrl ? (
                 <img
-                  src={item.imageUrl}
+                  src={getOptimizedImageUrl(item.imageUrl, { width: 160, height: 160 })}
                   alt={item.menuName}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-full bg-slate-200" />

@@ -55,7 +55,15 @@ const RiwayatPesananPage: FC = () => {
 
     return {
       startDate: start.toISOString(),
-      endDate: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString(),
+      endDate: new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        23,
+        59,
+        59,
+        999,
+      ).toISOString(),
     };
   }, [timeFilter]);
 
@@ -78,9 +86,7 @@ const RiwayatPesananPage: FC = () => {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-serif text-[26px] font-bold text-slate-dark">Riwayat Pesanan</h1>
         {!isLoading && totalElements > 0 && (
-          <span className="text-[13px] text-slate-dark/50">
-            {totalElements} pesanan
-          </span>
+          <span className="text-[13px] text-slate-dark/50">{totalElements} pesanan</span>
         )}
       </div>
 

@@ -1,6 +1,7 @@
 import BottomNav from '@shared/components/layout/BottomNav';
-import { Award, Receipt, RotateCcw } from 'lucide-react';
-import { type FC } from 'react';
+import { Award, ChevronLeft, Receipt, RotateCcw } from 'lucide-react';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePoinBalance } from './hooks/usePoinBalance';
 import { usePoinRiwayat } from './hooks/usePoinRiwayat';
 
@@ -40,6 +41,7 @@ const SkeletonRow: FC = () => (
 
 /* ─── Main Page ──────────────────────────────────────────── */
 const LoyaltiPage: FC = () => {
+  const navigate = useNavigate();
   const { data: balance, isLoading: balanceLoading } = usePoinBalance();
   const { data: riwayatPage, isLoading: riwayatLoading } = usePoinRiwayat(0);
 
@@ -47,17 +49,26 @@ const LoyaltiPage: FC = () => {
 
   return (
     <div className="relative w-full min-h-screen bg-[#f5f5f5] font-sans pb-[100px]">
-      {/* ── Top Bar ─────────────────────────────────────── */}
-      <div className="sticky top-0 z-20 bg-[#f5f5f5] pt-[52px] pb-[4px] px-[20px] border-b border-[#e4beb4]/30">
-        <span className="font-serif font-semibold text-[18px] text-[#303841]">Aroma Senja</span>
-      </div>
+      {/* ── Top App Bar ─────────────────────────────────── */}
+      <header className="sticky top-0 z-20 bg-[#f5f5f5] h-[64px] px-[20px] flex items-center justify-between border-b border-[#e4beb4]/40 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <div className="flex items-center gap-[12px]">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="flex items-center justify-center text-[#303841] active:opacity-60 transition-opacity"
+            aria-label="Kembali"
+          >
+            <ChevronLeft size={22} strokeWidth={2.5} />
+          </button>
+          <h1 className="font-serif font-bold text-[20px] text-[#303841] leading-[28px]">
+            Loyalty &amp; Poin
+          </h1>
+        </div>
+      </header>
 
-      {/* ── Page Header ─────────────────────────────────── */}
-      <div className="px-[20px] pt-[24px] pb-[20px]">
-        <h1 className="font-serif font-bold text-[28px] text-[#303841] leading-[36px]">
-          Loyalty &amp; Poin
-        </h1>
-        <p className="font-sans font-normal text-[14px] text-[#5b4039]/70 mt-[4px] leading-[22px]">
+      {/* ── Subtitle ─────────────────────────────────────── */}
+      <div className="px-[20px] pt-[16px] pb-[4px]">
+        <p className="font-sans font-normal text-[14px] text-[#5b4039]/70 leading-[22px]">
           Nikmati keuntungan eksklusif di setiap kunjungan.
         </p>
       </div>
@@ -114,13 +125,13 @@ const LoyaltiPage: FC = () => {
 
       {/* ── Riwayat Poin ────────────────────────────────── */}
       <div className="px-[20px] mt-[32px]">
-        <h2 className="font-serif font-bold text-[20px] text-[#303841] mb-[16px]">
-          Riwayat Poin
-        </h2>
+        <h2 className="font-serif font-bold text-[20px] text-[#303841] mb-[16px]">Riwayat Poin</h2>
 
         {riwayatLoading ? (
           <div className="flex flex-col gap-[12px]">
-            {[1, 2, 3].map((i) => <SkeletonRow key={i} />)}
+            {[1, 2, 3].map((i) => (
+              <SkeletonRow key={i} />
+            ))}
           </div>
         ) : riwayat.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-[48px] opacity-50">
@@ -134,17 +145,14 @@ const LoyaltiPage: FC = () => {
           <div className="flex flex-col gap-[10px]">
             {riwayat.map((item) => {
               const isEarn = item.tipe === 'earn' || item.tipe === 'refund';
-              const labelTipe = item.tipe === 'earn'
-                ? 'SELESAI'
-                : item.tipe === 'refund'
-                ? 'REFUND'
-                : 'TUKAR';
+              const labelTipe =
+                item.tipe === 'earn' ? 'SELESAI' : item.tipe === 'refund' ? 'REFUND' : 'TUKAR';
 
               const judulTransaksi = item.kodePesanan
                 ? `Pesanan ${item.kodePesanan}`
                 : item.tipe === 'redeem'
-                ? 'Penukaran Poin'
-                : 'Transaksi Poin';
+                  ? 'Penukaran Poin'
+                  : 'Transaksi Poin';
 
               return (
                 <div
@@ -154,9 +162,7 @@ const LoyaltiPage: FC = () => {
                   {/* Icon */}
                   <div
                     className={`w-[44px] h-[44px] rounded-[12px] flex items-center justify-center shrink-0 ${
-                      isEarn
-                        ? 'bg-[#76abae]/10'
-                        : 'bg-[#ff5722]/10'
+                      isEarn ? 'bg-[#76abae]/10' : 'bg-[#ff5722]/10'
                     }`}
                   >
                     {isEarn ? (
@@ -183,7 +189,8 @@ const LoyaltiPage: FC = () => {
                         isEarn ? 'text-[#76abae]' : 'text-[#ff5722]'
                       }`}
                     >
-                      {isEarn ? '+' : '-'}{Math.abs(item.jumlahPoin)} Poin
+                      {isEarn ? '+' : '-'}
+                      {Math.abs(item.jumlahPoin)} Poin
                     </span>
                     <span
                       className={`font-sans font-bold text-[10px] tracking-[0.5px] mt-[2px] ${

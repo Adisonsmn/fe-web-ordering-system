@@ -15,10 +15,10 @@ export const useUpdatePesananStatus = () => {
       status: string;
       estimasiMenit?: number;
     }) =>
-      apiClient.patch<unknown, PesananResponse>(
-        `/pesanan/${pesananId}/status`,
-        { status, estimasiMenit },
-      ),
+      apiClient.patch<unknown, PesananResponse>(`/pesanan/${pesananId}/status`, {
+        status,
+        estimasiMenit,
+      }),
     onSuccess: () => {
       // Hanya invalidate stats dashboard — JANGAN invalidate mejaKeys
       // Status meja dikelola via WebSocket /topic/admin/meja-status
@@ -27,4 +27,3 @@ export const useUpdatePesananStatus = () => {
     },
   });
 };
-

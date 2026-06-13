@@ -25,9 +25,7 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
 
   // Rata-rata diskon dihitung di frontend
   const rataDiskon =
-    data.totalPesananPakaiPromo > 0
-      ? data.totalDiskonPromo / data.totalPesananPakaiPromo
-      : 0;
+    data.totalPesananPakaiPromo > 0 ? data.totalDiskonPromo / data.totalPesananPakaiPromo : 0;
 
   return (
     <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-6 border border-slate-dark/5 flex flex-col min-h-[300px]">
@@ -56,7 +54,6 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
                 {data.totalPoinDigunakan.toLocaleString('id-ID')} pts
               </span>
             </div>
-
           </div>
         </div>
 
@@ -81,9 +78,7 @@ export const PromoReportWidget: FC<PromoReportWidgetProps> = ({ data, isLoading 
             </div>
             <div className="flex justify-between items-center text-[14px] pt-1 border-t border-slate-dark/10">
               <span className="text-slate-dark/60">Rata-rata Diskon</span>
-              <span className="font-bold text-slate-dark">
-                {formatRupiah(rataDiskon)}
-              </span>
+              <span className="font-bold text-slate-dark">{formatRupiah(rataDiskon)}</span>
             </div>
           </div>
         </div>

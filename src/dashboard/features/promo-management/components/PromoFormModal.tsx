@@ -1,8 +1,8 @@
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { Modal } from '@shared/components/ui/Modal';
-import { cn } from '@shared/utils/cn';
 import type { CreatePromoRequest, PromoResponse } from '@shared/types';
+import { cn } from '@shared/utils/cn';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { type FC, useEffect, useMemo, useState } from 'react';
 import { useMenuAdminList } from '../../menu-management/hooks/useMenuAdmin';
@@ -42,8 +42,11 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
 
   // Target mode: 'category' | 'menu' | 'none'
   // none = berlaku untuk semua menu (tidak ada target spesifik)
-  const targetMode: 'category' | 'menu' | 'none' =
-    formData.targetCategory ? 'category' : selectedMenuIds.length > 0 ? 'menu' : 'none';
+  const targetMode: 'category' | 'menu' | 'none' = formData.targetCategory
+    ? 'category'
+    : selectedMenuIds.length > 0
+      ? 'menu'
+      : 'none';
 
   const { data: allMenus = [] } = useMenuAdminList();
 
@@ -51,8 +54,7 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
     if (!menuSearch.trim()) return allMenus;
     const q = menuSearch.toLowerCase();
     return allMenus.filter(
-      (m) =>
-        m.menuName.toLowerCase().includes(q) || m.category.toLowerCase().includes(q),
+      (m) => m.menuName.toLowerCase().includes(q) || m.category.toLowerCase().includes(q),
     );
   }, [allMenus, menuSearch]);
 
@@ -127,7 +129,6 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
       className="max-w-xl"
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
         {/* Nama Promo */}
         <div className="flex flex-col gap-2">
           <label htmlFor="namaPromo" className="text-[13px] font-semibold text-slate-dark/80">
@@ -160,7 +161,10 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
                 <option value="PERSEN">Persen (%)</option>
                 <option value="NOMINAL">Nominal (Rp)</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-dark/40 pointer-events-none" />
+              <ChevronDown
+                size={14}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-dark/40 pointer-events-none"
+              />
             </div>
           </div>
           <div className="flex flex-col gap-2">
@@ -195,7 +199,10 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="tanggalSelesai" className="text-[13px] font-semibold text-slate-dark/80">
+            <label
+              htmlFor="tanggalSelesai"
+              className="text-[13px] font-semibold text-slate-dark/80"
+            >
               Tanggal Selesai
             </label>
             <Input
@@ -241,7 +248,9 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
               Target Diskon
               {targetMode !== 'none' && (
                 <span className="ml-1 text-teal-muted">
-                  {targetMode === 'category' ? '(Kategori aktif)' : `(${selectedMenuIds.length} menu dipilih)`}
+                  {targetMode === 'category'
+                    ? '(Kategori aktif)'
+                    : `(${selectedMenuIds.length} menu dipilih)`}
                 </span>
               )}
             </span>
@@ -274,12 +283,13 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
                 </option>
               ))}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-dark/40 pointer-events-none" />
+            <ChevronDown
+              size={14}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-dark/40 pointer-events-none"
+            />
           </div>
           {selectedMenuIds.length > 0 && (
-            <p className="text-[11px] text-slate-dark/40">
-              Nonaktif — anda memilih menu spesifik
-            </p>
+            <p className="text-[11px] text-slate-dark/40">Nonaktif — anda memilih menu spesifik</p>
           )}
         </div>
 
@@ -303,7 +313,10 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
 
           {/* Search box */}
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-dark/40" />
+            <Search
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-dark/40"
+            />
             <input
               type="text"
               value={menuSearch}
@@ -347,9 +360,7 @@ export const PromoFormModal: FC<PromoFormModalProps> = ({
                       <div
                         className={cn(
                           'w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-colors',
-                          isSelected
-                            ? 'bg-teal-muted border-teal-muted'
-                            : 'border-slate-dark/20',
+                          isSelected ? 'bg-teal-muted border-teal-muted' : 'border-slate-dark/20',
                         )}
                       >
                         {isSelected && <Check size={10} className="text-white" />}
