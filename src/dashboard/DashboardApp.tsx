@@ -1,6 +1,9 @@
 import { useAuthStore } from '@shared/stores/authStore';
 import { cn } from '@shared/utils/cn';
 import { usePageTitle } from '@shared/hooks/usePageTitle';
+import { DashboardToast } from './components/DashboardToast';
+import { useAdminNotifications } from './hooks/useAdminNotifications';
+import { NotificationPanel } from './components/NotificationPanel';
 import {
   BarChart3,
   Bell,
@@ -13,7 +16,7 @@ import {
   Settings,
   Ticket,
 } from 'lucide-react';
-import { type FC, useState } from 'react';
+import { type FC, useState, useRef, useEffect } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { buildToggleRequest } from './features/pengaturan/api/config.api';
 import {
@@ -40,6 +43,45 @@ const DashboardApp: FC = () => {
 
   // Set judul tab browser
   usePageTitle('Dashboard');
+
+  // Notifikasi suara + toast — aktif di semua halaman dashboard
+  const {
+    liveToasts,
+    dismissLiveToast,
+    history,
+    dismissFromHistory,
+    unreadCount,
+    markAllRead,
+  } = useAdminNotifications();
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close notification panel
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
+
+  const handleToggleNotifications = () => {
+    if (!showNotifications) {
+      markAllRead();
+    }
+    setShowNotifications((prev) => !prev);
+  };
 
   const { data: restoConfig, isLoading: isLoadingConfig } = useRestoConfigAdmin();
   const { mutate: updateConfig, isPending: isUpdatingConfig } = useUpdateRestoConfig();
@@ -149,14 +191,32 @@ const DashboardApp: FC = () => {
           </div>
 
           <div className="flex items-center gap-6">
-            <button
-              type="button"
-              disabled
-              className="relative text-slate-dark/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Bell size={20} />
-              {/* <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-deep-orange border-2 border-white"></span> */}
-            </button>
+            <div className="relative" ref={notificationRef}>
+              <button
+                type="button"
+                onClick={handleToggleNotifications}
+                className={cn(
+                  'relative text-slate-dark/60 hover:text-slate-dark transition-colors p-2 rounded-full hover:bg-slate-100',
+                  showNotifications && 'text-slate-dark bg-slate-100',
+                )}
+                aria-label="Notifikasi"
+              >
+                <Bell size={20} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 min-w-[16px] h-[16px] rounded-full bg-deep-orange text-white text-[9px] font-bold flex items-center justify-center border-2 border-white px-1">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {showNotifications && (
+                <NotificationPanel
+                  history={history}
+                  onDismiss={dismissFromHistory}
+                  onClose={() => setShowNotifications(false)}
+                />
+              )}
+            </div>
 
             {/* Profile */}
             <div className="flex items-center gap-3 pl-6 border-l border-slate-dark/10">
@@ -253,6 +313,9 @@ const DashboardApp: FC = () => {
           </div>
         </div>
       )}
+
+      {/* Notifikasi Toast Global */}
+      <DashboardToast toasts={liveToasts} onDismiss={dismissLiveToast} />
     </div>
   );
 };
