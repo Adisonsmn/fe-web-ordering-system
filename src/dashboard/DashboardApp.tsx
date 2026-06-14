@@ -1,5 +1,6 @@
 import { useAuthStore } from '@shared/stores/authStore';
 import { cn } from '@shared/utils/cn';
+import { usePageTitle } from '@shared/hooks/usePageTitle';
 import {
   BarChart3,
   Bell,
@@ -36,6 +37,9 @@ const DashboardApp: FC = () => {
   const location = useLocation();
   const [showConfirmCloseModal, setShowConfirmCloseModal] = useState(false);
   const [showConfirmOpenModal, setShowConfirmOpenModal] = useState(false);
+
+  // Set judul tab browser
+  usePageTitle('Dashboard');
 
   const { data: restoConfig, isLoading: isLoadingConfig } = useRestoConfigAdmin();
   const { mutate: updateConfig, isPending: isUpdatingConfig } = useUpdateRestoConfig();

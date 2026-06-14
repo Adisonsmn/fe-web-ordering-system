@@ -1,5 +1,6 @@
 import { type FC, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { usePageTitle } from '@shared/hooks/usePageTitle';
 import { useRestoConfig } from './features/splash/hooks/useRestoConfig';
 
 // Halaman yang tetap bisa diakses meskipun restoran tutup
@@ -9,6 +10,9 @@ const CustomerApp: FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: restoConfig, isLoading } = useRestoConfig();
+
+  // Set judul tab browser
+  usePageTitle('Customer');
 
   useEffect(() => {
     // Jika data sudah dimuat dan restoran tutup
