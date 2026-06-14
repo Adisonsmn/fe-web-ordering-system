@@ -48,8 +48,8 @@ export const useAdminNotifications = () => {
       const id = crypto.randomUUID();
       const item: ToastItem = { id, type, title, description };
 
-      // Tambah ke live toasts (untuk pop-up)
-      setLiveToasts((prev) => [...prev, item]);
+      // Tambah ke live toasts (untuk pop-up, batasi maks 5)
+      setLiveToasts((prev) => [...prev, item].slice(-5));
 
       // Tambah ke history, batasi maks 5, yang terbaru di atas
       setHistory((prev) => [item, ...prev].slice(0, MAX_HISTORY));

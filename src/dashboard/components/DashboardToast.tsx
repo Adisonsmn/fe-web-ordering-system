@@ -53,12 +53,12 @@ const SingleToast: FC<{ toast: ToastItem; onDismiss: (id: string) => void }> = (
   useEffect(() => {
     // Trigger enter animation
     const enterTimer = setTimeout(() => setVisible(true), 10);
-    // Auto-dismiss setelah 5 detik
+    // Auto-dismiss setelah 4 detik
     const dismissTimer = setTimeout(() => {
       setVisible(false);
       // Delay actual removal agar animasi exit selesai
       setTimeout(() => onDismiss(toast.id), 300);
-    }, 5000);
+    }, 4000);
 
     return () => {
       clearTimeout(enterTimer);
@@ -106,7 +106,7 @@ const SingleToast: FC<{ toast: ToastItem; onDismiss: (id: string) => void }> = (
         className={cn('absolute bottom-0 left-0 h-[3px] rounded-b-xl', config.color, 'bg-current opacity-30')}
         style={{
           width: visible ? '0%' : '100%',
-          transition: 'width 5s linear',
+          transition: 'width 4s linear',
         }}
       />
     </div>
