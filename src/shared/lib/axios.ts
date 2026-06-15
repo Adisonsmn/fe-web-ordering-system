@@ -11,7 +11,14 @@ export const apiClient = axios.create({
 // Request Interceptor: Attach JWT token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().token;
+    const { token, loginExpiresAt, setSessionInvalidated } = useAuthStore.getState();
+
+    // Cek apakah sesi sudah kedaluwarsa sebelum kirim request
+    if (loginExpiresAt !== null && Date.now() > loginExpiresAt) {
+      setSessionInvalidated(true);
+      return Promise.reject(new Error('Sesi telah berakhir. Silakan login kembali.'));
+    }
+
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -79,7 +86,7 @@ apiClient.interceptors.response.use(
         // Hanya clear auth jika memang ada token di store (bukan request anonim)
         const currentToken = useAuthStore.getState().token;
         if (currentToken) {
-          useAuthStore.getState().clearAuth();
+          useAuthStore.getState().setSessionInvalidated(true);
         }
         return Promise.reject(error);
       }
@@ -114,8 +121,8 @@ apiClient.interceptors.response.use(
         throw new Error('Refresh token response structure is invalid');
       } catch (refreshError) {
         processQueue(refreshError, null);
-        // Hanya clear auth jika refresh token benar-benar invalid/expired
-        useAuthStore.getState().clearAuth();
+        // Set invalid state instead of clearing immediately!
+        useAuthStore.getState().setSessionInvalidated(true);
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

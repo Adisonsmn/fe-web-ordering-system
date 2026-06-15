@@ -31,8 +31,8 @@ const AdminLoginForm: FC = () => {
       return;
     }
 
-    // Call API (passing email & password; rememberMe could be saved to localStorage if needed later)
-    login({ email, password });
+    // Call API with rememberMe flag untuk menentukan durasi sesi
+    login({ email, password, rememberMe });
   };
 
   const errorMessage = apiError?.response?.data?.message || apiError?.message || validationError;

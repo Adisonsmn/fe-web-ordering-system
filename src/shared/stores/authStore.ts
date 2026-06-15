@@ -20,13 +20,18 @@ export interface AuthState {
   refreshToken: string | null;
   user: UserProfile | null;
   isGuest: boolean;
+  /** Timestamp Unix (ms) kapan sesi berakhir. null = tidak ada expiry */
+  loginExpiresAt: number | null;
+  isSessionInvalidated: boolean;
   setAuth: (
     token: string,
     refreshToken: string,
     user: UserProfile | null,
     isGuest: boolean,
+    loginExpiresAt?: number,
   ) => void;
   setUser: (user: UserProfile | null) => void;
+  setSessionInvalidated: (val: boolean) => void;
   clearAuth: () => void;
 }
 
@@ -37,16 +42,30 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       user: null,
       isGuest: false,
-      setAuth: (token, refreshToken, user, isGuest) =>
+      loginExpiresAt: null,
+      isSessionInvalidated: false,
+      setAuth: (token, refreshToken, user, isGuest, loginExpiresAt) =>
         set((state) => {
           state.token = token;
           state.refreshToken = refreshToken;
           state.user = user;
           state.isGuest = isGuest;
+          // Hanya update loginExpiresAt jika eksplisit diberikan (login baru).
+          // Saat dipanggil dari refresh token flow (tanpa arg ke-5),
+          // nilai lama dipertahankan agar expiry tidak berubah.
+          if (loginExpiresAt !== undefined) {
+            state.loginExpiresAt = loginExpiresAt;
+          }
+          // Reset status invalidasi jika sukses login/refresh baru
+          state.isSessionInvalidated = false;
         }),
       setUser: (user) =>
         set((state) => {
           state.user = user;
+        }),
+      setSessionInvalidated: (val) =>
+        set((state) => {
+          state.isSessionInvalidated = val;
         }),
       clearAuth: () =>
         set((state) => {
@@ -54,6 +73,8 @@ export const useAuthStore = create<AuthState>()(
           state.refreshToken = null;
           state.user = null;
           state.isGuest = false;
+          state.loginExpiresAt = null;
+          state.isSessionInvalidated = false;
         }),
     })),
     {
