@@ -1,5 +1,6 @@
 import { cn } from '@shared/utils/cn';
 import { type FC, type ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export const Modal: FC<ModalProps> = ({
     xl: 'max-w-xl',
   }[maxWidth];
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
@@ -79,6 +80,8 @@ export const Modal: FC<ModalProps> = ({
 
         <div className="p-6 overflow-y-auto">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
+
