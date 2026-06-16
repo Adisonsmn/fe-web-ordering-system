@@ -27,6 +27,7 @@
 **Aroma Senja** adalah sistem pemesanan mandiri untuk restoran. Pelanggan tidak perlu memanggil pelayan — cukup scan QR Code di meja, pilih menu, dan pesan langsung dari smartphone. Status pesanan akan diperbarui secara real-time.
 
 ### Alur Utama Pelanggan
+
 ```
 Scan QR Code Meja → Selamat Datang → Pilih Login/Daftar/Tamu
     → Katalog Menu → Keranjang → Konfirmasi Pesanan
@@ -34,14 +35,15 @@ Scan QR Code Meja → Selamat Datang → Pilih Login/Daftar/Tamu
 ```
 
 ### Fitur Utama
-| Fitur | Deskripsi |
-|-------|-----------|
-| 🔍 Katalog Menu | Tampilkan menu dengan kategori, search, dan promo |
-| 🛒 Keranjang | Kelola item, gunakan poin loyalitas |
-| 📦 Tracking Real-time | Status pesanan diperbarui via WebSocket |
-| 🏆 Loyalitas | Program poin untuk pelanggan member |
-| 👤 Profil | Edit data diri & foto profil |
-| 📊 Dashboard Admin | Manajemen pesanan, menu, promo, meja, laporan |
+
+| Fitur                 | Deskripsi                                         |
+| --------------------- | ------------------------------------------------- |
+| 🔍 Katalog Menu       | Tampilkan menu dengan kategori, search, dan promo |
+| 🛒 Keranjang          | Kelola item, gunakan poin loyalitas               |
+| 📦 Tracking Real-time | Status pesanan diperbarui via WebSocket           |
+| 🏆 Loyalitas          | Program poin untuk pelanggan member               |
+| 👤 Profil             | Edit data diri & foto profil                      |
+| 📊 Dashboard Admin    | Manajemen pesanan, menu, promo, meja, laporan     |
 
 ---
 
@@ -49,33 +51,33 @@ Scan QR Code Meja → Selamat Datang → Pilih Login/Daftar/Tamu
 
 Project ini terdiri dari **dua aplikasi berbeda** yang di-bundle dalam satu codebase:
 
-| | Customer App | Dashboard Admin |
-|--|---|---|
-| **URL** | `/customer` | `/dashboard` |
-| **Target** | Pelanggan restoran | Operator/admin restoran |
-| **Tampilan** | Mobile (max 390px) | Desktop (min 1280px) |
-| **Auth** | JWT CLIENT / Guest | JWT ADMIN |
+|              | Customer App       | Dashboard Admin         |
+| ------------ | ------------------ | ----------------------- |
+| **URL**      | `/customer`        | `/dashboard`            |
+| **Target**   | Pelanggan restoran | Operator/admin restoran |
+| **Tampilan** | Mobile (max 390px) | Desktop (min 1280px)    |
+| **Auth**     | JWT CLIENT / Guest | JWT ADMIN               |
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Kategori | Teknologi | Versi |
-|----------|-----------|-------|
-| Framework UI | React | 18.x |
-| Language | TypeScript | 5.x |
-| Build Tool | Vite | 5.x |
-| Styling | Tailwind CSS | 4.x |
-| State Management | Zustand + Immer | 5.x |
-| Server State | TanStack React Query | 5.x |
-| HTTP Client | Axios | 1.x |
-| Routing | React Router DOM | 7.x |
-| WebSocket | STOMP.js + SockJS | 7.x |
-| Storage | Supabase (avatar/gambar) | 2.x |
-| Charts | Recharts | 3.x |
-| Icons | Lucide React | latest |
-| Linter & Formatter | Biome | 2.x |
-| Package Manager | **Bun** | latest |
+| Kategori           | Teknologi                | Versi  |
+| ------------------ | ------------------------ | ------ |
+| Framework UI       | React                    | 18.x   |
+| Language           | TypeScript               | 5.x    |
+| Build Tool         | Vite                     | 5.x    |
+| Styling            | Tailwind CSS             | 4.x    |
+| State Management   | Zustand + Immer          | 5.x    |
+| Server State       | TanStack React Query     | 5.x    |
+| HTTP Client        | Axios                    | 1.x    |
+| Routing            | React Router DOM         | 7.x    |
+| WebSocket          | STOMP.js + SockJS        | 7.x    |
+| Storage            | Supabase (avatar/gambar) | 2.x    |
+| Charts             | Recharts                 | 3.x    |
+| Icons              | Lucide React             | latest |
+| Linter & Formatter | Biome                    | 2.x    |
+| Package Manager    | **Bun**                  | latest |
 
 > ⚠️ **Wajib menggunakan `bun`** sebagai package manager. Jangan gunakan `npm`, `yarn`, atau `pnpm`.
 
@@ -145,20 +147,22 @@ aroma-senja-frontend/
 
 Pastikan sudah terinstall di komputer kamu:
 
-| Tools | Versi Minimum | Cek dengan |
-|-------|---------------|------------|
-| [Node.js](https://nodejs.org) | 18.x | `node -v` |
-| [Bun](https://bun.sh) | 1.x | `bun -v` |
-| [Git](https://git-scm.com) | - | `git -v` |
+| Tools                         | Versi Minimum | Cek dengan |
+| ----------------------------- | ------------- | ---------- |
+| [Node.js](https://nodejs.org) | 18.x          | `node -v`  |
+| [Bun](https://bun.sh)         | 1.x           | `bun -v`   |
+| [Git](https://git-scm.com)    | -             | `git -v`   |
 
 ### Install Bun (jika belum ada)
 
 **Windows (PowerShell):**
+
 ```powershell
 powershell -c "irm bun.sh/install.ps1 | iex"
 ```
 
 **macOS / Linux:**
+
 ```bash
 curl -fsSL https://bun.sh/install | bash
 ```
@@ -211,6 +215,7 @@ bun run dev
 ```
 
 Aplikasi akan berjalan di:
+
 - **Customer App** → [http://localhost:5173/customer](http://localhost:5173/customer)
 - **Dashboard Admin** → [http://localhost:5173/dashboard](http://localhost:5173/dashboard)
 
@@ -218,12 +223,12 @@ Aplikasi akan berjalan di:
 
 ## 🔑 Environment Variables
 
-| Variable | Wajib | Deskripsi |
-|----------|-------|-----------|
-| `VITE_API_BASE_URL` | ✅ | Base URL REST API backend (sudah termasuk `/api`) |
-| `VITE_WS_URL` | ✅ | URL WebSocket untuk tracking pesanan real-time |
-| `VITE_SUPABASE_URL` | ✅ | URL project Supabase (untuk upload foto menu & avatar) |
-| `VITE_SUPABASE_ANON_KEY` | ✅ | Anon Key Supabase (public key, aman di frontend) |
+| Variable                 | Wajib | Deskripsi                                              |
+| ------------------------ | ----- | ------------------------------------------------------ |
+| `VITE_API_BASE_URL`      | ✅    | Base URL REST API backend (sudah termasuk `/api`)      |
+| `VITE_WS_URL`            | ✅    | URL WebSocket untuk tracking pesanan real-time         |
+| `VITE_SUPABASE_URL`      | ✅    | URL project Supabase (untuk upload foto menu & avatar) |
+| `VITE_SUPABASE_ANON_KEY` | ✅    | Anon Key Supabase (public key, aman di frontend)       |
 
 > Semua env variable **wajib** diawali `VITE_` agar bisa diakses di kode. Akses via `import.meta.env.VITE_*`.
 
@@ -233,40 +238,40 @@ Aplikasi akan berjalan di:
 
 ### Customer App (`/customer/...`)
 
-| Rute | Halaman | Deskripsi |
-|------|---------|-----------|
-| `/customer` | Splash Screen | Loading awal |
-| `/customer/welcome` | Selamat Datang | Tampil setelah scan QR |
-| `/customer/auth-choice` | Pilihan Auth | Login / Daftar / Lanjut Sebagai Tamu |
-| `/customer/login` | Login | Form login member |
-| `/customer/register` | Daftar | Form registrasi member baru |
-| `/customer/katalog` | Katalog Menu | Daftar menu, search, filter kategori |
-| `/customer/keranjang` | Keranjang | Item keranjang & ringkasan biaya |
-| `/customer/konfirmasi` | Konfirmasi | Review pesanan sebelum submit |
-| `/customer/pesanan-sukses/:id` | Pesanan Berhasil | Konfirmasi pesanan diterima |
-| `/customer/pesanan/tracking/:id` | Tracking | Status pesanan real-time |
-| `/customer/struk/:id` | Struk Digital | Struk setelah pesanan selesai |
-| `/customer/ulasan/:id` | Beri Ulasan | Form rating & ulasan |
-| `/customer/ulasan-sukses` | Ulasan Terkirim | Konfirmasi ulasan berhasil |
-| `/customer/loyalty` | Loyalitas | Poin & riwayat reward |
-| `/customer/account` | Profil Saya | Edit profil, logout |
+| Rute                             | Halaman          | Deskripsi                            |
+| -------------------------------- | ---------------- | ------------------------------------ |
+| `/customer`                      | Splash Screen    | Loading awal                         |
+| `/customer/welcome`              | Selamat Datang   | Tampil setelah scan QR               |
+| `/customer/auth-choice`          | Pilihan Auth     | Login / Daftar / Lanjut Sebagai Tamu |
+| `/customer/login`                | Login            | Form login member                    |
+| `/customer/register`             | Daftar           | Form registrasi member baru          |
+| `/customer/katalog`              | Katalog Menu     | Daftar menu, search, filter kategori |
+| `/customer/keranjang`            | Keranjang        | Item keranjang & ringkasan biaya     |
+| `/customer/konfirmasi`           | Konfirmasi       | Review pesanan sebelum submit        |
+| `/customer/pesanan-sukses/:id`   | Pesanan Berhasil | Konfirmasi pesanan diterima          |
+| `/customer/pesanan/tracking/:id` | Tracking         | Status pesanan real-time             |
+| `/customer/struk/:id`            | Struk Digital    | Struk setelah pesanan selesai        |
+| `/customer/ulasan/:id`           | Beri Ulasan      | Form rating & ulasan                 |
+| `/customer/ulasan-sukses`        | Ulasan Terkirim  | Konfirmasi ulasan berhasil           |
+| `/customer/loyalty`              | Loyalitas        | Poin & riwayat reward                |
+| `/customer/account`              | Profil Saya      | Edit profil, logout                  |
 
 ### Dashboard Admin (`/dashboard/...`)
 
 > Semua halaman dashboard membutuhkan login sebagai **ADMIN**.
 
-| Rute | Halaman | Deskripsi |
-|------|---------|-----------|
-| `/dashboard/login` | Login Admin | Form login admin |
-| `/dashboard` | Overview | Statistik harian, live orders, meja |
-| `/dashboard/pesanan` | Manajemen Pesanan | Kanban board pesanan aktif |
-| `/dashboard/pesanan/riwayat` | Riwayat Pesanan | Histori semua pesanan |
-| `/dashboard/menu` | Manajemen Menu | CRUD item menu |
-| `/dashboard/promo` | Manajemen Promo | CRUD promo & diskon |
-| `/dashboard/promo/riwayat` | Riwayat Promo | Histori penggunaan promo |
-| `/dashboard/meja` | Manajemen Meja | Kelola meja & generate QR Code |
-| `/dashboard/laporan` | Analitik & Laporan | Grafik pendapatan, menu terlaris, export Excel |
-| `/dashboard/pengaturan` | Pengaturan | Profil admin & konfigurasi restoran |
+| Rute                         | Halaman            | Deskripsi                                      |
+| ---------------------------- | ------------------ | ---------------------------------------------- |
+| `/dashboard/login`           | Login Admin        | Form login admin                               |
+| `/dashboard`                 | Overview           | Statistik harian, live orders, meja            |
+| `/dashboard/pesanan`         | Manajemen Pesanan  | Kanban board pesanan aktif                     |
+| `/dashboard/pesanan/riwayat` | Riwayat Pesanan    | Histori semua pesanan                          |
+| `/dashboard/menu`            | Manajemen Menu     | CRUD item menu                                 |
+| `/dashboard/promo`           | Manajemen Promo    | CRUD promo & diskon                            |
+| `/dashboard/promo/riwayat`   | Riwayat Promo      | Histori penggunaan promo                       |
+| `/dashboard/meja`            | Manajemen Meja     | Kelola meja & generate QR Code                 |
+| `/dashboard/laporan`         | Analitik & Laporan | Grafik pendapatan, menu terlaris, export Excel |
+| `/dashboard/pengaturan`      | Pengaturan         | Profil admin & konfigurasi restoran            |
 
 ---
 
@@ -343,19 +348,19 @@ Gunakan alias berikut, **jangan** pakai relative path lebih dari 1 level:
 
 ```ts
 // ✅ Benar
-import { Button } from '@shared/components/ui'
-import { useAuthStore } from '@shared/stores/authStore'
-import { KatalogPage } from '@customer/features/katalog/KatalogPage'
+import { Button } from "@shared/components/ui";
+import { useAuthStore } from "@shared/stores/authStore";
+import { KatalogPage } from "@customer/features/katalog/KatalogPage";
 
 // ❌ Salah
-import { Button } from '../../../shared/components/ui'
+import { Button } from "../../../shared/components/ui";
 ```
 
-| Alias | Target |
-|-------|--------|
-| `@/` | `src/` |
-| `@shared/` | `src/shared/` |
-| `@customer/` | `src/customer/` |
+| Alias         | Target           |
+| ------------- | ---------------- |
+| `@/`          | `src/`           |
+| `@shared/`    | `src/shared/`    |
+| `@customer/`  | `src/customer/`  |
 | `@dashboard/` | `src/dashboard/` |
 
 ### Design Tokens (Warna)
@@ -371,23 +376,23 @@ Gunakan class Tailwind dari design token, **bukan** hex langsung:
 <button className="bg-[#FF5722] text-white">
 ```
 
-| Token | Warna | Kegunaan |
-|-------|-------|----------|
+| Token         | Warna     | Kegunaan                |
+| ------------- | --------- | ----------------------- |
 | `deep-orange` | `#FF5722` | CTA, harga, badge aktif |
-| `slate-dark` | `#303841` | Teks, heading, navbar |
-| `teal-muted` | `#76ABAE` | Aksen, tab aktif, chip |
-| `off-white` | `#F5F5F5` | Background utama |
+| `slate-dark`  | `#303841` | Teks, heading, navbar   |
+| `teal-muted`  | `#76ABAE` | Aksen, tab aktif, chip  |
+| `off-white`   | `#F5F5F5` | Background utama        |
 
 ### Penempatan File
 
-| Tipe File | Lokasi |
-|-----------|--------|
-| Komponen 1 feature | `features/{nama}/components/` |
-| Hook API | `features/{nama}/hooks/` |
-| Fungsi fetch | `features/{nama}/api/` |
-| Zustand store (lokal) | `features/{nama}/store/` |
-| Komponen dipakai 2+ feature | `shared/components/` |
-| Types lintas feature | `shared/types/` |
+| Tipe File                   | Lokasi                        |
+| --------------------------- | ----------------------------- |
+| Komponen 1 feature          | `features/{nama}/components/` |
+| Hook API                    | `features/{nama}/hooks/`      |
+| Fungsi fetch                | `features/{nama}/api/`        |
+| Zustand store (lokal)       | `features/{nama}/store/`      |
+| Komponen dipakai 2+ feature | `shared/components/`          |
+| Types lintas feature        | `shared/types/`               |
 
 ---
 
@@ -416,13 +421,14 @@ Pastikan semua variabel di `.env.example` sudah diisi di:
 
 ## 👥 Tim Pengembang
 
-| Nama | GitHub | Role |
-|------|--------|------|
-| Adison Simanullang | *(isi username)* | Frontend Lead |
-| agungsrgh | [@agungsrgh](https://github.com/agungsrgh) | Frontend Dev |
-| Farhan Hamzah | [@farhan-hamzah](https://github.com/farhan-hamzah) | Frontend Dev |
-| Nazal Putra | [@NazalDev](https://github.com/NazalDev) | Frontend Dev |
-| Muhammad Huttaqi | [@MrTakeIt](https://github.com/MrTakeIt) | Frontend Dev |
+| Nama               | GitHub                                             | Role          |
+| ------------------ | -------------------------------------------------- | ------------- |
+| Adison Simanullang | _(isi username)_                                   | Frontend Lead |
+| agungsrgh          | [@agungsrgh](https://github.com/agungsrgh)         | Frontend Dev  |
+| Farhan Hamzah      | [@farhan-hamzah](https://github.com/farhan-hamzah) | Frontend Dev  |
+| Nazal Putra P. D.  | [@NazalDev](https://github.com/NazalDev)           | Frontend Dev  |
+| Muhammad Huttaqi   | [@MrTakeIt](https://github.com/MrTakeIt)           | Frontend Dev  |
+
 ---
 
 ## 📝 Lisensi
