@@ -3,6 +3,9 @@
 > **REST API + WebSocket Server untuk Sistem Pemesanan Mandiri Restoran berbasis QR Code**
 > Dibangun dengan Spring Boot 3, PostgreSQL (Supabase), dan STOMP WebSocket untuk update pesanan real-time.
 
+## URL
+- **Dashboard:** [https://www.aromasenjacafe.store/dashboard](https://www.aromasenjacafe.store/dashboard)
+- **Customer:** [https://www.aromasenjacafe.store/customer](https://www.aromasenjacafe.store/customer)
 
 ## About
 
